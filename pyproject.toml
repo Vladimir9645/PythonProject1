@@ -7,8 +7,39 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.13"
+poetry-core = "^2.2.1"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+lint = [
+    "flake8 (>=7.3.0,<8.0.0)",
+    "mypy (>=1.18.2,<2.0.0)",
+    "black (>=25.9.0,<26.0.0)",
+    "isort (>=6.0.1,<7.0.0)"
+]
+
+
+[tool.mypy]
+disallow_untyped_defs = true
+warn_return_any = true
+exclude = "venv"
+
+
+[tool.flake8]
+max-line-length = 119
+exclude = .git, __pycache__
+
+
+[tool.black]
+max-line-length = 119
+exclude = .git
+
+
+[tool.isort]
+max-line-length = 119
+
+
