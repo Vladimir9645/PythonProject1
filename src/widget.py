@@ -1,39 +1,48 @@
-
-
 """Обрабатывает информацию как о картах, так и о счетах."""
 
-
-
 from src.masks import get_mask_account, get_mask_card_number
-
-
-#Функция
-def mask_account_card():
-    """Обрабатывает информацию как о картах, так и о счетах."""
-    card_types = ['Maestro', 'MasterCard', 'Visa Classic', 'Visa Platinum', 'Visa Gold'] # Список карт
-    account_types = ['Счет'] # Список счет
-
-    account_card = input("Введите название карты или счета: ").strip() # - Убирает лишние пробелы вокруг текста.
-    # Помогает избежать ошибок при вводе данных, если пользователь случайно добавил пробелы.
-    if account_card in card_types: # Проверяем есть-ли в списке вводамая карта.
-        number = input("Введите номер карты (16 цифр): ").strip() # Ввод номера карты
-        return f"{account_card} {get_mask_card_number(number)}"  # Нашу функцию ставим 1 затем функц маски. При вызове.
-    elif account_card in account_types: # Проверяем список если указали Счет.
-        number = input("Введите номер счёта (20 цифр): ").strip() # Тоже что и скартой только 20 цифр.
-        return f"{account_card} {get_mask_account(number)}"  # Все тоже что и выше
-    else:
-        return "Неизвестный тип карты или счёта" # Если указаны не верные имена Карт и Счет.
-# Пример вызова
-print(mask_account_card()) # Вызов функции.
-
-
-
-""" Принимает строку с датой в формате "2024-03-11T02:26:18.671407" 
-    и возвращает строку с датой в формате "ДД.ММ.ГГГГ" """
-
-
-
 from datetime import datetime
+
+
+def mask_account_card(input_str: str) -> str:
+
+    """ Принимает строку формата:
+    - "Visa Platinum 7000792289606361"
+    - "Maestro 7000792289606361"
+    - "Счет 73654108430135874305"
+    Возвращает строку с замаскированным номером. """
+
+    card_types = ['Maestro', 'MasterCard',
+                  'Visa Classic', 'Visa Platinum',
+                  'Visa Gold'
+                  ]
+    account_types = ['Счет']
+
+    input_str = input_str.strip()
+    parts = input_str.split()
+
+    # Определяем тип карты/счёта и номер (номер - всегда последний элемент)
+    name = " ".join(parts[:-1])
+    number = parts[-1]
+
+    if name in card_types:
+        masked_number = get_mask_card_number(number)
+        return f"{name} {masked_number}"
+    elif name in account_types:
+        masked_number = get_mask_account(number)
+        return f"{name} {masked_number}"
+    else:
+        return "Неизвестный тип карты или счёта"
+
+
+# Пример вызова
+print(mask_account_card("Visa Platinum 7000792289606361"))
+print(mask_account_card("Maestro 7000792289606361"))
+print(mask_account_card("Счет 73654108430135874305"))
+
+
+""" Принимает строку с датой в формате "2024-03-11T02:26:18.671407"
+и возвращает строку с датой в формате "ДД.ММ.ГГГГ" """
 
 
 def get_date(date_str: str) -> str:
@@ -43,5 +52,7 @@ def get_date(date_str: str) -> str:
     # Форматируем дату в нужный формат: День.Месяц.Год
     return dt.strftime("%d.%m.%Y")
 
+
 # Пример использования:
-print(get_date("2024-03-11T02:26:18.671407"))  # Выведет: 11.03.2024
+# Выведет: 11.03.2024
+print(get_date("2024-03-11T02:26:18.671407"))
