@@ -1,16 +1,27 @@
 from datetime import datetime
+from typing import List, Dict, Any
 
-def filter_by_state(dictionary_1, state_value):
-    """Фильтрация списка словарей по ключу 'state' и значению state_value"""
-    return [d for d in dictionary_1 if d.get('state') == state_value]
 
-def sort_by_date(dictionary_2, date_key="date", date_format="%Y-%m-%dT%H:%M:%S.%f", reverse=False):
+def filter_by_state(dictionary_1: List[Dict[str, Any]],
+                    state: str) -> List[Dict[str, Any]]:
+    """Фильтрация списка словарей по ключу 'state'"""
+    return [d for d in dictionary_1 if d.get('state') == state]
+
+
+def sort_by_date(dictionary_2: List[Dict[str, Any]],
+                 date_key: str = "date",
+                 date_format: str = "%Y-%m-%dT%H:%M:%S.%f",
+                 reverse: bool = True) -> List[Dict[str, Any]]:
     """Сортирует список словарей по дате, учитывая формат даты с временем и миллисекундами"""
     return sorted(
         dictionary_2,
         key=lambda d: datetime.strptime(d[date_key], date_format),
         reverse=reverse
     )
+# код сортирует список словарей по дате,
+# указанной в каждом словаре,
+# в том порядке, который задаётся переменной reverse
+
 
 # Исходный список словарей
 dictionary = [
