@@ -1,22 +1,17 @@
-"""Обрабатывает информацию как о картах, так и о счетах."""
+from datetime import datetime
 
 from src.masks import get_mask_account, get_mask_card_number
-from datetime import datetime
 
 
 def mask_account_card(input_str: str) -> str:
-
-    """ Принимает строку формата:
+    """Принимает строку формата:
     - "Visa Platinum 7000792289606361"
     - "Maestro 7000792289606361"
     - "Счет 73654108430135874305"
-    Возвращает строку с замаскированным номером. """
+    Возвращает строку с замаскированным номером."""
 
-    card_types = ['Maestro', 'MasterCard',
-                  'Visa Classic', 'Visa Platinum',
-                  'Visa Gold'
-                  ]
-    account_types = ['Счет']
+    card_types = ["Maestro", "MasterCard", "Visa Classic", "Visa Platinum", "Visa Gold"]
+    account_types = ["Счет"]
 
     input_str = input_str.strip()
     parts = input_str.split()
@@ -41,12 +36,9 @@ print(mask_account_card("Maestro 7000792289606361"))
 print(mask_account_card("Счет 73654108430135874305"))
 
 
-""" Принимает строку с датой в формате "2024-03-11T02:26:18.671407"
-и возвращает строку с датой в формате "ДД.ММ.ГГГГ" """
-
-
 def get_date(date_str: str) -> str:
-    """Принимает строку с датой в формает и возвращает строку с датой."""
+    """ Принимает строку с датой в формате "2024-03-11T02:26:18.671407"
+и возвращает строку с датой в формате "ДД.ММ.ГГГГ" """
     # Переносим входную строку в объект datetime
     dt = datetime.fromisoformat(date_str)
     # Форматируем дату в нужный формат: День.Месяц.Год

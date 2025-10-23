@@ -1,8 +1,5 @@
-"""принимает на вход номер карты в виде числа и возвращает маску"""
-
-
 def get_mask_card_number(card_number: str) -> str:
-    """Функция входа номер карты в виде числа и возврата в виде маски """
+    """Функция входа номер карты в виде числа и возврата в виде маски"""
     # Убираем все пробелы из переданной строки
     card_number = card_number.replace(" ", "")
     # Проверяем, что длина карты 16 символов и все символы цифры
@@ -21,9 +18,6 @@ def get_mask_card_number(card_number: str) -> str:
     part4 = card_number[-4:]
 
     return f"{part1} {part2}{part2_mask} {part3_mask} {part4}"
-
-
-"""Принимает на вход номер счета в виде числа и возвращает маску номера"""
 
 
 def get_mask_account(mask_account: str) -> str:
