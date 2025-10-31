@@ -10,13 +10,23 @@ def mask_account_card(input_str: str) -> str:
     - "Счет 73654108430135874305"
     Возвращает строку с замаскированным номером."""
 
-    card_types = ["Maestro", "MasterCard", "Visa Classic", "Visa Platinum", "Visa Gold"]
+    card_types = [
+        "Maestro",
+        "MasterCard",
+        "Visa Classic",
+        "Visa Platinum",
+        "Visa Gold",
+    ]
     account_types = ["Счет"]
 
     input_str = input_str.strip()
     parts = input_str.split()
 
     # Определяем тип карты/счёта и номер (номер - всегда последний элемент)
+    parts = input_str.split()
+    if not parts:
+        return "Неизвестный тип карты или счёта"
+
     name = " ".join(parts[:-1])
     number = parts[-1]
 
@@ -37,8 +47,8 @@ print(mask_account_card("Счет 73654108430135874305"))
 
 
 def get_date(date_str: str) -> str:
-    """ Принимает строку с датой в формате "2024-03-11T02:26:18.671407"
-и возвращает строку с датой в формате "ДД.ММ.ГГГГ" """
+    """Принимает строку с датой в формате "2024-03-11T02:26:18.671407"
+    и возвращает строку с датой в формате "ДД.ММ.ГГГГ" """
     # Переносим входную строку в объект datetime
     dt = datetime.fromisoformat(date_str)
     # Форматируем дату в нужный формат: День.Месяц.Год
