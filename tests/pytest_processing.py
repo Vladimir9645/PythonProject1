@@ -2,24 +2,8 @@
 import pytest
 from datetime import datetime
 from typing import List, Dict, Any
+from  src.processing import filter_by_state, sort_by_date
 
-# Ваши функции из вопроса
-def filter_by_state(
-    dictionary_1: List[Dict[str, Any]], state: str = "EXECUTED"
-) -> List[Dict[str, Any]]:
-    return [item for item in dictionary_1 if item.get("state") == state]
-
-def sort_by_date(
-    dictionary_2: List[Dict[str, Any]],
-    date_key: str = "date",
-    date_format: str = "%Y-%m-%dT%H:%M:%S.%f",
-    reverse: bool = True,
-) -> List[Dict[str, Any]]:
-    return sorted(
-        dictionary_2,
-        key=lambda d: datetime.strptime(d[date_key], date_format),
-        reverse=reverse,
-    )
 
 # Фикстуры для тестирования
 @pytest.fixture
