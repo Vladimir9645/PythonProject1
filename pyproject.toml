@@ -21,6 +21,9 @@ lint = [
     "black (>=25.9.0,<26.0.0)",
     "isort (>=6.0.1,<7.0.0)"
 ]
+dev = [
+    "pytest (>=8.4.2,<9.0.0)"
+]
 
 
 [tool.mypy]
@@ -29,17 +32,22 @@ warn_return_any = true
 exclude = "venv"
 
 
-[tool.flake8]
-max-line-length = 119
-exclude = ["__pycache__", ".git"]
-
 
 [tool.black]
-max-line-length = 119
-exclude = [".git"]
+line-length = 79
+
+exclude = '''
+/(
+    \.git
+    | \.venv
+    | build
+    | dist
+)/
+'''
+
 
 
 [tool.isort]
-max-line-length = 119
+line_length = 79
 
 
