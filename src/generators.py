@@ -1,4 +1,11 @@
-def filter_by_currency(transactions, currency):
+import functools
+import traceback
+from typing import Any, Callable, Dict, Iterator, List, Optional
+
+
+def filter_by_currency(
+    transactions: List[Dict[str, Any]], currency: str
+) -> Iterator[Dict[str, Any]]:
     """Фильтрует список транзакций
     по заданному коду валюты."""
     for transaction in transactions:
@@ -79,7 +86,9 @@ for _ in range(2):
     print(next(usd_transactions))
 
 
-def transaction_descriptions(transactions):
+def transaction_descriptions(
+    transactions: List[Dict[str, Any]],
+) -> Iterator[str]:
     """
     Функция выводит описание каждой транзакции из списка.
     """
@@ -99,7 +108,7 @@ for _ in range(5):
     print(next(descriptions))  # Последующие с отступом
 
 
-def card_number_generator(start, end):
+def card_number_generator(start: int, end: int) -> Iterator[str]:
     """Генератор номеров банковских карт
     в формате XXXX XXXX XXXX XXXX.
     Принимает начальное и конечное
@@ -122,3 +131,58 @@ print()
 # Пример использования
 for card_number in card_number_generator(1, 5):
     print(card_number)
+
+
+def log(filename: Optional[str] = None) -> Callable:
+    """Декоратор для логирования запуска,
+     результата и ошибок функции. Аргументы:
+    filename (str или None) — имя файла для записи логов.
+    Если None, логи выводятся в консоль.
+    Возвращает: Декорированную функцию с логированием."""
+
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            # Сообщение о начале выполнения
+            msg_start = f"Начало выполнения функции {func.__name__}"
+            # Сообщение о завершении без ошибок
+            msg_end = f"Функция {func.__name__} выполнена успешно"
+            try:
+                _write_log(msg_start, filename)  # Логируем начало
+                output = func(
+                    *args, **kwargs
+                )  # Выполняем оригинальную функцию
+                msg_result = f"Результат: {output}"  # Сообщение с результатом
+                _write_log(msg_result, filename)  # Логируем результат
+                _write_log(msg_end, filename)  # Логируем успешное завершение
+                return output
+            except Exception as e:
+                # Формируем сообщение с ошибкой и трассировкой
+                msg_error = (
+                    f"Ошибка в функции {func.__name__}: "
+                    f"{e}\n{traceback.format_exc()}"
+                )
+                _write_log(
+                    msg_start, filename
+                )  # Логируем начало (на случай перехвата ошибки)
+                _write_log(msg_error, filename)  # Логируем ошибку
+
+                raise  # Пробрасываем исключение дальше
+
+        return wrapper
+
+    return decorator
+
+
+def _write_log(message: str, filename: Optional[str]) -> None:
+    """Вспомогательная функция для записи лог-сообщений.
+    Если указан filename — записывает в файл,
+    иначе выводит в консоль. Аргументы:
+    message (str) — сообщение для записи
+    filename (str или None) —
+    имя файла для записи, либо None"""
+    if filename:
+        with open(filename, "a", encoding="utf-8") as f:
+            f.write(message + "\n")
+    else:
+        print(message)
