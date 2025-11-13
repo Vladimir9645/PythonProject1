@@ -1,0 +1,15 @@
+Начало выполнения функции my_function
+Результат: 3
+Функция my_function выполнена успешно
+Начало выполнения функции error_function
+Начало выполнения функции error_function
+Ошибка в функции error_function: Что-то пошло не так
+Traceback (most recent call last):
+  File "C:\Users\Rudoruka\PycharmProjects\PythonProject1\src\generators.py", line 152, in wrapper
+    output = func(
+        *args, **kwargs
+    )  # Выполняем оригинальную функцию
+  File "C:\Users\Rudoruka\PycharmProjects\PythonProject1\tests\pytest_generators.py", line 120, in error_function
+    raise ValueError("Что-то пошло не так")
+ValueError: Что-то пошло не так
+

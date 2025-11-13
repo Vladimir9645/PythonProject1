@@ -186,3 +186,9 @@ def _write_log(message: str, filename: Optional[str]) -> None:
             f.write(message + "\n")
     else:
         print(message)
+
+@log(filename="mylog.txt")
+def my_function(x, y):
+    return x + y
+
+my_function(1, 2)
