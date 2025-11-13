@@ -134,61 +134,51 @@ for card_number in card_number_generator(1, 5):
 
 
 def log(filename: Optional[str] = None) -> Callable:
-    """Декоратор для логирования запуска,
-     результата и ошибок функции. Аргументы:
-    filename (str или None) — имя файла для записи логов.
-    Если None, логи выводятся в консоль.
-    Возвращает: Декорированную функцию с логированием."""
+    """Декоратор для логирования запуска, результата и ошибок функции.
+    Если filename задан, логи пишутся в файл, иначе — в консоль."""
 
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            # Сообщение о начале выполнения
             msg_start = f"Начало выполнения функции {func.__name__}"
-            # Сообщение о завершении без ошибок
             msg_end = f"Функция {func.__name__} выполнена успешно"
             try:
-                _write_log(msg_start, filename)  # Логируем начало
-                output = func(
-                    *args, **kwargs
-                )  # Выполняем оригинальную функцию
-                msg_result = f"Результат: {output}"  # Сообщение с результатом
-                _write_log(msg_result, filename)  # Логируем результат
-                _write_log(msg_end, filename)  # Логируем успешное завершение
+                _write_log(msg_start, filename)
+                output = func(*args, **kwargs)
+                msg_result = f"Результат: {output}"
+                _write_log(msg_result, filename)
+                _write_log(msg_end, filename)
                 return output
             except Exception as e:
-                # Формируем сообщение с ошибкой и трассировкой
-                msg_error = (
-                    f"Ошибка в функции {func.__name__}: "
-                    f"{e}\n{traceback.format_exc()}"
-                )
-                _write_log(
-                    msg_start, filename
-                )  # Логируем начало (на случай перехвата ошибки)
-                _write_log(msg_error, filename)  # Логируем ошибку
-
-                raise  # Пробрасываем исключение дальше
+                msg_error = f"Ошибка в функции {func.__name__}: {e}\n{traceback.format_exc()}"
+                _write_log(msg_error, filename)
+                raise
 
         return wrapper
 
     return decorator
 
-
 def _write_log(message: str, filename: Optional[str]) -> None:
-    """Вспомогательная функция для записи лог-сообщений.
-    Если указан filename — записывает в файл,
-    иначе выводит в консоль. Аргументы:
-    message (str) — сообщение для записи
-    filename (str или None) —
-    имя файла для записи, либо None"""
+    """Если filename задан, пишет логи в файл,
+    иначе выводит сообщение в консоль."""
     if filename:
         with open(filename, "a", encoding="utf-8") as f:
             f.write(message + "\n")
     else:
         print(message)
 
-@log(filename="mylog.txt")
-def my_function(x, y):
+
+@log()  # Логи будут выводиться в консоль
+def my_func(x, y):
     return x + y
 
-my_function(1, 2)
+@log("mylog.txt")  # Логи будут записываться в файл my_log.txt
+def my_other_func(a, b):
+    return a * b
+
+# Вызов функций
+print()
+print(my_func(3, 5))
+print(my_other_func(4, 2))
+
+
