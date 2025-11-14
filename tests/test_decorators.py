@@ -1,47 +1,77 @@
 import pytest
-import os
+import traceback
+from pathlib import Path
 
 from src.decorators import log
 
 
-# Функция для тестов
-@log(filename="mylog.txt")
-def my_function(x, y):
-    return x + y
+def test_log_decorator_console_success(capsys):
+    @log()
+    def add(x, y):
+        return x + y
+
+    # вызываем декорированную функцию
+    result = add(2, 3)
+    assert result == 5
+
+    # перехватываем вывод в консоль
+    captured = capsys.readouterr().out
+
+    # проверяем, что логи в консоли содержат ожидаемые строчки
+    assert "Начало выполнения функции add" in captured
+    assert "Результат: 5" in captured
+    assert "Функция add выполнена успешно" in captured
 
 
-@log(filename="mylog.txt")
-def error_function():
-    raise ValueError("Что-то пошло не так")
+def test_log_decorator_console_exception(capsys):
+    @log()
+    def fail():
+        raise ValueError("Test error")
+
+    # ожидаем, что при вызове будет прокинуто ValueError
+    with pytest.raises(ValueError):
+        fail()
+
+    captured = capsys.readouterr().out
+
+    # проверяем, что начало выполнения залогировано и потом появилась информация об ошибке
+    assert "Начало выполнения функции fail" in captured
+    assert "Ошибка в функции fail: Test error" in captured
+    # часть трейсбэка
+    assert "ValueError: Test error" in captured
 
 
-# Тест успешного выполнения
-def test_my_function_success(capsys):
-    if os.path.exists("mylog.txt"):
-        os.remove("mylog.txt")
+def test_log_decorator_file_success(tmp_path):
+    log_file = tmp_path / "success.log"
 
-    result = my_function(1, 2)
-    captured = capsys.readouterr()
+    @log(str(log_file))
+    def multiply(a, b):
+        return a * b
 
-    assert result == 3
-    assert "Успешно выполнена моя функция" in captured.out
+    result = multiply(4, 5)
+    assert result == 20
 
-    with open("mylog.txt") as f:
-        content = f.read()
-    assert "Функция my_function вызвана успешно с результатом: 3" in content
+    # читаем содержимое файла
+    content = log_file.read_text(encoding="utf-8")
+
+    assert "Начало выполнения функции multiply" in content
+    assert "Результат: 20" in content
+    assert "Функция multiply выполнена успешно" in content
 
 
-# Тест обработки исключения
-def test_error_function_exception(capsys):
-    if os.path.exists("mylog.txt"):
-        os.remove("mylog.txt")
+def test_log_decorator_file_exception(tmp_path):
+    log_file = tmp_path / "error.log"
 
-    with pytest.raises(ValueError, match="Что-то пошло не так"):
-        error_function()
-    captured = capsys.readouterr()
+    @log(str(log_file))
+    def fail():
+        raise RuntimeError("Failure")
 
-    assert "Исключение в error_function: что-то пошло не так" in captured.out
+    with pytest.raises(RuntimeError):
+        fail()
 
-    with open("mylog.txt") as f:
-        content = f.read()
-    assert "функция unction error_function вызвала исключение: что-то пошло не так" in content
+    content = log_file.read_text(encoding="utf-8")
+
+    assert "Начало выполнения функции fail" in content
+    assert "Ошибка в функции fail: Failure" in content
+    # проверяем, что трейсбэк тоже попал в лог
+    assert "RuntimeError: Failure" in content
