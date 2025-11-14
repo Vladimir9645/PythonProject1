@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from src.generators import filter_by_currency, transaction_descriptions, card_number_generator, log
+from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
 
 
 def filter_by_currency(transactions, currency):
