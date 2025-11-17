@@ -1,4 +1,4 @@
-from src.masks import get_mask_card_number, get_mask_account
+from src.masks import get_mask_account, get_mask_card_number
 
 
 def test_get_mask_card_number():
@@ -12,13 +12,18 @@ def test_get_mask_card_number():
     assert get_mask_card_number("123456789012") == "Неверный номер карты"
 
     # Номер с символами
-    assert get_mask_card_number("1234 56ab 9012 3456") == "Неверный номер карты"
+    assert (
+        get_mask_card_number("1234 56ab 9012 3456") == "Неверный номер карты"
+    )
 
     # Номер слишком длинный
-    assert get_mask_card_number("12345678901234567890") == "Неверный номер карты"
+    assert (
+        get_mask_card_number("12345678901234567890") == "Неверный номер карты"
+    )
 
     # Пустая строка
-    assert get_mask_card_number("") ==  "Неверный номер карты"
+    assert get_mask_card_number("") == "Неверный номер карты"
+
 
 def test_get_mask_account():
     # Правельный номер счета 20 цифр, без пробелов
@@ -31,7 +36,9 @@ def test_get_mask_account():
     assert get_mask_account("1234567890") == "Неверный номер счета"
 
     # Номер счета больше 20 симфолов
-    assert get_mask_account ("123456789012345678901234") == "Неверный номер счета"
+    assert (
+        get_mask_account("123456789012345678901234") == "Неверный номер счета"
+    )
 
     # Пустая строка
     assert get_mask_account("") == "Неверный номер счета"

@@ -1,6 +1,7 @@
-import pytest
 import traceback
 from pathlib import Path
+
+import pytest
 
 from src.decorators import log
 
@@ -34,7 +35,8 @@ def test_log_decorator_console_exception(capsys):
 
     captured = capsys.readouterr().out
 
-    # проверяем, что начало выполнения залогировано и потом появилась информация об ошибке
+    # проверяем, что начало выполнения залогировано
+    # и потом появилась информация об ошибке
     assert "Начало выполнения функции fail" in captured
     assert "Ошибка в функции fail: Test error" in captured
     # часть трейсбэка

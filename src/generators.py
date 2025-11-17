@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Iterator, List, Optional
 
 
 def filter_by_currency(
-    transactions: List[Dict[str, Any]], currency: str
+        transactions: List[Dict[str, Any]], currency: str
 ) -> Iterator[Dict[str, Any]]:
     """Фильтрует список транзакций
     по заданному коду валюты."""
@@ -87,7 +87,7 @@ for _ in range(2):
 
 
 def transaction_descriptions(
-    transactions: List[Dict[str, Any]],
+        transactions: List[Dict[str, Any]],
 ) -> Iterator[str]:
     """
     Функция выводит описание каждой транзакции из списка.
@@ -121,7 +121,7 @@ def card_number_generator(start: int, end: int) -> Iterator[str]:
         # Форматируем число с ведущими нулями до 16 цифр
         card_str = f"{number:016d}"
         # Разбиваем на группы по 4 символа и соединяем через пробел
-        formatted = " ".join(card_str[i : i + 4] for i in range(0, 16, 4))
+        formatted = " ".join(card_str[i: i + 4] for i in range(0, 16, 4))
         yield formatted
 
 
