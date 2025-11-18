@@ -20,13 +20,17 @@ def log(filename: Optional[str] = None) -> Callable:
                 _write_log(msg_end, filename)
                 return output
             except Exception as e:
-                msg_error = f"Ошибка в функции {func.__name__}: {e}\n{traceback.format_exc()}"
+                msg_error = (
+                    f"Ошибка в функции {func.__name__}: "
+                    f"{e}\n{traceback.format_exc()}"
+                )
                 _write_log(msg_error, filename)
                 raise
 
         return wrapper
 
     return decorator
+
 
 def _write_log(message: str, filename: Optional[str]) -> None:
     """Если filename задан, пишет логи в файл,
@@ -42,16 +46,13 @@ def _write_log(message: str, filename: Optional[str]) -> None:
 def my_func(x, y):
     return x + y
 
+
 @log("mylog.txt")  # Логи будут записываться в файл my_log.txt
 def my_other_func(a, b):
     return a * b
+
 
 # Вызов функций
 print()
 print(my_func(3, 5))
 print(my_other_func(4, 2))
-
-
-
-
-
