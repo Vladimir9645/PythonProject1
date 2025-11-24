@@ -2,7 +2,7 @@ import json
 import os
 
 
-def dictionary_with_transaction_data()-> list:
+def dictionary_with_transaction_data() -> list:
     """
     Загружает данные из файла operations.json и
     возвращает их списком операций.
