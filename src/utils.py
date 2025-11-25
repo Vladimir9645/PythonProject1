@@ -2,7 +2,7 @@ import json
 import os
 
 
-def dictionary_with_transaction_data() -> list:
+def dictionary_with_transaction_data():
     """
     Загружает данные из файла operations.json и
     возвращает их списком операций.
@@ -11,25 +11,20 @@ def dictionary_with_transaction_data() -> list:
     возвращает пустой список.
     """
 
-    # Путь до текущего скрипта
-    script_dir = os.path.dirname(__file__)
-    # Путь до файла operations.json
-    file_path = os.path.join(script_dir, "data", "operations.json")
-
-    if not os.path.exists(file_path):
-        return []  # Файл не найден — пустой список
+    # Собираем путь к файлу
+    patch = os.path.join('data', 'operations.json')
 
     try:
-        with open(file_path, encoding="utf-8") as json_file:
-            data = json.load(json_file)
-            if isinstance(data, list):  # Проверка, что данные — список
-                return data  # Возвращаем список операций
+        with open(patch, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            # Предполагаем, что это список операций
+            if isinstance(data, list):
+                return data
             else:
-                return []  # Если не список — пустой список
-    except (json.JSONDecodeError, UnicodeDecodeError):
-        return []  # Ошибка при чтении JSON — пустой список
+                return []
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
 
-
-# Пример вызова:
-operations = dictionary_with_transaction_data()
-print(operations)  # Выводит список операций
+# Пример вызова функции
+transactions = dictionary_with_transaction_data()
+print(transactions)
