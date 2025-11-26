@@ -29,11 +29,3 @@ def test_convert_non_rub_success(mock_get):
     transaction = {"amount": "10", "currency": "USD"}
     result = convert_to_rub(transaction)
     assert result == 10 * 75.0
-
-
-
-
-
-
-
-

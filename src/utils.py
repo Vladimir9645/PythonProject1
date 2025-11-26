@@ -17,7 +17,7 @@ def dictionary_with_transaction_data():
     try:
         with open(patch, 'r', encoding='utf-8') as file:
             data = json.load(file)
-            # Предполагаем, что это список операций
+            # Это список операций
             if isinstance(data, list):
                 return data
             else:
