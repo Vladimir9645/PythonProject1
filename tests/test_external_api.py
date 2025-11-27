@@ -1,5 +1,7 @@
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import patch, Mock
+
 from src.external_api import convert_to_rub
 
 
@@ -9,14 +11,12 @@ def test_convert_rub_currency():
     result = convert_to_rub(transaction)
     assert result == 100.0
 
-@patch('requests.get')
+
+@patch("requests.get")
 def test_convert_non_rub_success(mock_get):
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {
-        "success": True,
-        "rates": {"RUB": 75.0}
-    }
+    mock_response.json.return_value = {"success": True, "rates": {"RUB": 75.0}}
     mock_get.return_value = mock_response
 
     transaction = {"amount": "10", "currency": "USD"}
