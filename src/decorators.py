@@ -43,12 +43,12 @@ def _write_log(message: str, filename: Optional[str]) -> None:
 
 
 @log()  # Логи будут выводиться в консоль
-def my_func(x, y):
+def my_func(x, y) -> None:
     return x + y
 
 
 @log("mylog.txt")  # Логи будут записываться в файл my_log.txt
-def my_other_func(a, b):
+def my_other_func(a, b) -> None:
     return a * b
 
 

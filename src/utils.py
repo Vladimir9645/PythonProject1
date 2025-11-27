@@ -1,23 +1,18 @@
 import json
 import os
+from typing import Any, Dict, List
 
 
-def dictionary_with_transaction_data():
+def dictionary_with_transaction_data(file_path: str = os.path.join('data', 'operations.json')) -> (List)[Dict[str, Any]]:
     """
-    Загружает данные из файла operations.json и
-    возвращает их списком операций.
+    Загружает данные из файла и возвращает их списком операций.
     Если файл отсутствует,
     пустой или содержит некорректный JSON,
     возвращает пустой список.
     """
-
-    # Собираем путь к файлу
-    patch = os.path.join('data', 'operations.json')
-
     try:
-        with open(patch, 'r', encoding='utf-8') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
-            # Это список операций
             if isinstance(data, list):
                 return data
             else:
@@ -25,6 +20,7 @@ def dictionary_with_transaction_data():
     except (FileNotFoundError, json.JSONDecodeError):
         return []
 
-# Пример вызова функции
-transactions = dictionary_with_transaction_data()
+# Вызов функции с правильным аргументом
+file_path = os.path.join('data', 'operations.json')
+transactions = dictionary_with_transaction_data(file_path)
 print(transactions)
