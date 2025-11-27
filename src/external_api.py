@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Any
+from typing import Any, Dict
 
 import requests
 from dotenv import load_dotenv
@@ -44,7 +44,9 @@ def convert_to_rub(
     # Проверяем наличие ключей и успешности
     success = data.get("success", False)
     if not success:
-        raise ValueError("API вернул unsuccessful статус или ключ 'success' отсутствует")
+        raise ValueError(
+            "API вернул unsuccessful статус " "или ключ 'success' отсутствует"
+        )
     if "rates" not in data:
         raise ValueError("Ключ 'rates' отсутствует в ответе")
     if "RUB" not in data["rates"]:
