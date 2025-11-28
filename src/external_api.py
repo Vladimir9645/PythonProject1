@@ -61,4 +61,5 @@ def convert_to_rub(
 transaction_example = {"amount": 500, "currency": "EUR"}
 # Раскоментировать строчку для проверки кода
 # при тестировании  закоментировать.
-# print(convert_to_rub(transaction_example))
+if __name__ == "__main__":
+    print(convert_to_rub(transaction_example))
