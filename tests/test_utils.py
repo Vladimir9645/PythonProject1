@@ -15,7 +15,7 @@ def test_json_decode_error():
                 "json.load",
                 side_effect=json.JSONDecodeError("Error", "doc", 0),
             ):
-                result = dictionary_with_transaction_data()
+                result = list(dictionary_with_transaction_data())
                 assert result == []
 
 
@@ -27,5 +27,5 @@ def test_json_not_a_list():
         with patch("builtins.open", mock_file):
             # В случае с json.load вернёт объект
             # если не список, по условию
-            result = dictionary_with_transaction_data()
+            result = list(dictionary_with_transaction_data())
             assert result == []
