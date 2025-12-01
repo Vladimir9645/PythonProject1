@@ -3,11 +3,8 @@ from typing import Any, Dict, Generator, Iterable, List
 
 import pytest
 
-from src.generators import (
-    card_number_generator,
-    filter_by_currency,
-    transaction_descriptions,
-)
+from src.generators import (card_number_generator, filter_by_currency,
+                            transaction_descriptions)
 
 
 def filter_by_currency_v2(
