@@ -3,7 +3,9 @@ import traceback
 from typing import Any, Callable, Dict, Iterator, List, Optional
 
 
-def filter_by_currency(transactions: List[Dict[str, Any]], currency_code: str) -> List[Dict[str, Any]]:
+def filter_by_currency(
+    transactions: List[Dict[str, Any]], currency_code: str
+) -> List[Dict[str, Any]]:
     filtered: List[Dict[str, Any]] = []
     for transaction in transactions:
         op_amount = transaction.get("operationAmount", {})
@@ -13,7 +15,6 @@ def filter_by_currency(transactions: List[Dict[str, Any]], currency_code: str) -
             if code == currency_code:
                 filtered.append(transaction)
     return filtered
-
 
 
 transactions = [

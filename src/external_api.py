@@ -1,6 +1,7 @@
 import os
-import requests
 from typing import Any, Dict
+
+import requests
 from dotenv import load_dotenv
 
 load_dotenv(".env")
@@ -11,6 +12,7 @@ if API_KEY is None:
     raise ValueError("API_KEY не установлен в .env")
 if API_URL is None:
     raise ValueError("API_URL не установлен в .env")
+
 
 def convert_to_rub(
     transaction: Dict[str, Any],
@@ -42,11 +44,15 @@ def convert_to_rub(
     )
 
     if response.status_code != 200:
-        raise ValueError(f"Ошибка запроса к API: статус {response.status_code}")
+        raise ValueError(
+            f"Ошибка запроса к API: статус {response.status_code}"
+        )
 
     data = response.json()
     if not data.get("success", False):
-        raise ValueError("API вернул unsuccessful статус или ключ 'success' отсутствует")
+        raise ValueError(
+            "API вернул unsuccessful статус или ключ 'success' отсутствует"
+        )
     if "rates" not in data or "RUB" not in data["rates"]:
         raise ValueError("Отсутствуют необходимые курсы в ответе API")
 
@@ -55,6 +61,7 @@ def convert_to_rub(
         raise ValueError("Курс RUB отсутствует в данных")
 
     return amount * float(rate)
+
 
 # Пример использования
 transaction_example = {"amount": 500, "currency": "EUR"}
