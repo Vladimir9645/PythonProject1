@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import pytest
 
@@ -21,7 +22,7 @@ from src.widget import get_date, mask_account_card
         ("Счет 73654108430135874305", "Счет **4305"),
     ],
 )
-def test_mask_account_card_valid(input_str, expected):
+def test_mask_account_card_valid(input_str: str, expected: str) -> None:
     assert mask_account_card(input_str) == expected
 
 
@@ -35,7 +36,7 @@ def test_mask_account_card_valid(input_str, expected):
         "Maestro",  # отсутствует номер
     ],
 )
-def test_mask_account_card_invalid(input_str):
+def test_mask_account_card_invalid(input_str: str) -> None:
     assert mask_account_card(input_str) == "Неизвестный тип карты или счёта"
 
 
@@ -50,7 +51,7 @@ def test_mask_account_card_invalid(input_str):
         ("1999-12-31T23:59:59", "31.12.1999"),
     ],
 )
-def test_get_date_valid(input_str, expected):
+def test_get_date_valid(input_str: str, expected: str) -> None:
     assert get_date(input_str) == expected
 
 
@@ -64,6 +65,6 @@ def test_get_date_valid(input_str, expected):
         "some random string",  # совсем не дата
     ],
 )
-def test_get_date_invalid(input_str):
+def test_get_date_invalid(input_str: str) -> None:
     with pytest.raises(Exception):
         get_date(input_str)

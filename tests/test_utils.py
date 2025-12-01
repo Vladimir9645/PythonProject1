@@ -7,7 +7,7 @@ import pytest
 from src.utils import dictionary_with_transaction_data
 
 
-def test_json_decode_error():
+def test_json_decode_error() -> None:
     mock_file = mock_open(read_data="Invalid JSON")
     with patch("os.path.exists", return_value=True):
         with patch("builtins.open", mock_file):
@@ -19,7 +19,7 @@ def test_json_decode_error():
                 assert result == []
 
 
-def test_json_not_a_list():
+def test_json_not_a_list() -> None:
     # JSON возвращает объект, а не список
     data = {"key": "value"}
     mock_file = mock_open(read_data=json.dumps(data))

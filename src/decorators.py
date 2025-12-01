@@ -1,9 +1,8 @@
 import functools
 import traceback
-from typing import Any, Callable, Dict, Iterator, List, Optional
+from typing import Any, Callable, Optional
 
-
-def log(filename: Optional[str] = None) -> Callable:
+def log(filename: Optional[str] = None) -> Callable[[Callable], Callable]:
     """Декоратор для логирования запуска, результата и ошибок функции.
     Если filename задан, логи пишутся в файл, иначе — в консоль."""
 
@@ -31,8 +30,7 @@ def log(filename: Optional[str] = None) -> Callable:
 
     return decorator
 
-
-def _write_log(message: str, filename: Optional[str]) -> None:
+def _write_log(message: str, filename: Optional[str])-> None:
     """Если filename задан, пишет логи в файл,
     иначе выводит сообщение в консоль."""
     if filename:
@@ -41,16 +39,13 @@ def _write_log(message: str, filename: Optional[str]) -> None:
     else:
         print(message)
 
-
 @log()  # Логи будут выводиться в консоль
-def my_func(x, y) -> None:
+def my_func(x: int, y: int) -> int:
     return x + y
 
-
 @log("mylog.txt")  # Логи будут записываться в файл my_log.txt
-def my_other_func(a, b) -> None:
+def my_other_func(a: int, b: int) -> int:
     return a * b
-
 
 # Вызов функций
 print()

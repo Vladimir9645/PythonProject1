@@ -3,19 +3,17 @@ import traceback
 from typing import Any, Callable, Dict, Iterator, List, Optional
 
 
-def filter_by_currency(
-    transactions: List[Dict[str, Any]], currency: str
-) -> Iterator[Dict[str, Any]]:
-    """Фильтрует список транзакций
-    по заданному коду валюты."""
+def filter_by_currency(transactions: List[Dict[str, Any]], currency_code: str) -> List[Dict[str, Any]]:
+    filtered: List[Dict[str, Any]] = []
     for transaction in transactions:
-        try:
-            # Проверяем, есть ли ключи и совпадает ли код валюты
-            if transaction["operationAmount"]["currency"]["code"] == currency:
-                yield transaction
-        except KeyError:
-            # Пропускаем транзакции с некорректной структурой
-            continue
+        op_amount = transaction.get("operationAmount", {})
+        currency = op_amount.get("currency")
+        if currency and isinstance(currency, dict):
+            code = currency.get("code")
+            if code == currency_code:
+                filtered.append(transaction)
+    return filtered
+
 
 
 transactions = [
@@ -82,8 +80,8 @@ transactions = [
 ]
 
 usd_transactions = filter_by_currency(transactions, "USD")
-for _ in range(2):
-    print(next(usd_transactions))
+usd_iter = iter(usd_transactions)
+print(next(usd_iter))
 
 
 def transaction_descriptions(

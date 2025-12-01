@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import pytest
 
@@ -8,7 +8,7 @@ from src.processing import filter_by_state, sort_by_date
 
 # Фикстуры для тестирования
 @pytest.fixture
-def sample_data():
+def sample_data() -> List[Dict[str, Any]]:
     return [
         {"id": 1, "state": "EXECUTED", "date": "2023-01-01T10:00:00.000000"},
         {"id": 2, "state": "CANCELED", "date": "2023-01-02T10:00:00.000000"},
@@ -19,7 +19,7 @@ def sample_data():
 
 
 @pytest.fixture
-def sample_data_with_same_dates():
+def sample_data_with_same_dates() -> List[Dict[str, Any]]:
     return [
         {"id": 10, "state": "EXECUTED", "date": "2023-01-01T10:00:00.000000"},
         {"id": 11, "state": "EXECUTED", "date": "2023-01-01T10:00:00.000000"},
@@ -27,7 +27,7 @@ def sample_data_with_same_dates():
 
 
 @pytest.fixture
-def sample_data_with_bad_date():
+def sample_data_with_bad_date() -> List[Dict[str, Any]]:
     return [
         {
             "id": 20,
@@ -53,7 +53,9 @@ def sample_data_with_bad_date():
         ("UNKNOWN", []),
     ],
 )
-def test_filter_by_state(sample_data, state, expected_ids):
+def test_filter_by_state(
+    sample_data: List[Dict[str, Any]], state: str, expected_ids: List[int]
+) -> None:
     """Тестирует функцию filter_by_state на корректную
      фильтрацию данных по заданному состоянию.
     sample_data — входные данные (список словарей),
@@ -64,7 +66,7 @@ def test_filter_by_state(sample_data, state, expected_ids):
     assert sorted(item["id"] for item in result) == sorted(expected_ids)
 
 
-def test_filter_empty_list():
+def test_filter_empty_list() -> None:
     """Проверяет, что filter_by_state возвращает
     пустой список при передачи пустого списка.
     """
@@ -72,7 +74,9 @@ def test_filter_empty_list():
 
 
 # Тесты для sort_by_date
-def test_sort_by_date_desc(sample_data):
+
+
+def test_sort_by_date_desc(sample_data: List[Dict[str, Any]]) -> None:
     """Проверяет сортировку по дате в порядке убывания (reverse=True)
     после фильтрации по состоянию "EXECUTED"."""
     filtered = filter_by_state(sample_data, "EXECUTED")
@@ -81,7 +85,7 @@ def test_sort_by_date_desc(sample_data):
     assert dates == sorted(dates, reverse=True)
 
 
-def test_sort_by_date_asc(sample_data):
+def test_sort_by_date_asc(sample_data: List[Dict[str, Any]]) -> None:
     """Проверяет сортировку по дате в порядке возрастания (reverse=False)
     после фильтрации по состоянию "EXECUTED"."""
     filtered = filter_by_state(sample_data, "EXECUTED")
@@ -90,7 +94,9 @@ def test_sort_by_date_asc(sample_data):
     assert dates == sorted(dates, reverse=False)
 
 
-def test_sort_by_date_same_dates(sample_data_with_same_dates):
+def test_sort_by_date_same_dates(
+    sample_data_with_same_dates: List[Dict[str, Any]],
+) -> None:
     """Проверяет стабильность сортировки, когда у элементов одинаковая дата.
     Ожидается сохранение исходного порядка элементов."""
     sorted_list = sort_by_date(sample_data_with_same_dates)
@@ -100,7 +106,7 @@ def test_sort_by_date_same_dates(sample_data_with_same_dates):
     assert sorted_list[0]["date"] == sorted_list[1]["date"]
 
 
-def test_sort_by_date_with_custom_format():
+def test_sort_by_date_with_custom_format() -> None:
     """Проверяет сортировку с использованием пользовательского формата даты.
     Формат передается параметром date_format."""
     data = [
@@ -113,7 +119,9 @@ def test_sort_by_date_with_custom_format():
     assert sorted_list[1]["id"] == 2
 
 
-def test_sort_by_date_invalid_format_raises(sample_data_with_bad_date):
+def test_sort_by_date_invalid_format_raises(
+    sample_data_with_bad_date: List[Dict[str, Any]],
+) -> None:
     """Проверяет, что при неверном формате
     даты возникает исключение ValueError."""
     # Проверяем, что при неверном формате возникает ошибка
@@ -122,7 +130,7 @@ def test_sort_by_date_invalid_format_raises(sample_data_with_bad_date):
 
 
 # Тесты для комбинированного использования
-def test_filter_and_sort_combined(sample_data):
+def test_filter_and_sort_combined(sample_data: List[Dict[str, Any]]) -> None:
     """Проверяет корректность комбинированного
     фильтра и сортировки"""
     state = "EXECUTED"
