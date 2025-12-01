@@ -8,31 +8,19 @@ load_dotenv(".env")
 API_KEY = os.getenv("API_KEY")
 API_URL = os.getenv("API_URL")
 
-if API_KEY is None:
-    raise ValueError("API_KEY не установлен в .env")
-if API_URL is None:
-    raise ValueError("API_URL не установлен в .env")
-
 
 def convert_to_rub(
     transaction: Dict[str, Any],
     api_url: str | None = None,
     api_key: str | None = None,
 ) -> float:
-    if api_url is None:
-        api_url = API_URL
-    if api_key is None:
-        api_key = API_KEY
+    api_url = api_url or API_URL
+    api_key = api_key or API_KEY
+    if not api_url or not api_key:
+        raise ValueError("API_URL и API_KEY должны быть заданы.")
 
-    if api_url is None or api_key is None:
-        raise ValueError("API_URL и API_KEY должны быть заданы")
-
-    amount = transaction.get("amount")
-    currency = transaction.get("currency")
-
-    if amount is None or currency is None:
-        raise ValueError("Отсутствуют amount или currency")
-    amount = float(amount)
+    amount = float(transaction["amount"])  # предполагается, что 'amount' есть
+    currency = transaction["currency"]  # предполагается, что 'currency' есть
 
     if currency == "RUB":
         return amount
@@ -42,24 +30,13 @@ def convert_to_rub(
         headers={"apikey": api_key},
         params={"base": currency, "symbols": "RUB"},
     )
-
-    if response.status_code != 200:
-        raise ValueError(
-            f"Ошибка запроса к API: статус {response.status_code}"
-        )
-
+    response.raise_for_status()  # выбросит исключение при ошибке
     data = response.json()
-    if not data.get("success", False):
-        raise ValueError(
-            "API вернул unsuccessful статус или ключ 'success' отсутствует"
-        )
-    if "rates" not in data or "RUB" not in data["rates"]:
-        raise ValueError("Отсутствуют необходимые курсы в ответе API")
 
-    rate = data["rates"]["RUB"]
+    # Предполагается, что если 'success' отсутствует, всё равно можем проверить 'rates'
+    rate = data.get("rates", {}).get("RUB")
     if rate is None:
-        raise ValueError("Курс RUB отсутствует в данных")
-
+        raise ValueError("Не удалось получить курс RUB из ответа API.")
     return amount * float(rate)
 
 

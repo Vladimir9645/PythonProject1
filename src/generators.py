@@ -120,7 +120,7 @@ def card_number_generator(start: int, end: int) -> Iterator[str]:
         # Форматируем число с ведущими нулями до 16 цифр
         card_str = f"{number:016d}"
         # Разбиваем на группы по 4 символа и соединяем через пробел
-        formatted = " ".join(card_str[i : i + 4] for i in range(0, 16, 4))
+        formatted = " ".join(card_str[i:i + 4] for i in range(0, 16, 4))
         yield formatted
 
 

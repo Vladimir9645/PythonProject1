@@ -1,27 +1,59 @@
 import os
-
+import unittest
+from typing import Any, Dict
 from unittest.mock import Mock, patch
 
-import pytest
-
-os.environ["API_KEY"] = "test_key"
-os.environ["API_URL"] = "https://mockapi.test"
+from dotenv import load_dotenv
 
 from src.external_api import convert_to_rub
 
+load_dotenv(".env")
 
-def test_convert_rub_currency() -> None:
-    """Тестируем для валюты RUB — сумма должна остаться без изменений."""
-    transaction = {"amount": "100", "currency": "RUB"}
-    result = convert_to_rub(transaction)
-    assert result == 100.0
+import src.external_api as ext_api
+
+# Устанавливаем переменные внутри модуля
+ext_api.API_URL = os.getenv("API_URL", "https://example.com/api")
+ext_api.API_KEY = os.getenv("API_KEY", "test_api_key")
 
 
-def test_missing_rub_in_rates() -> None:
-    """Обработка отсутствия ключа 'RUB' в 'rates'."""
-    mock_response = Mock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = {"success": True, "rates": {"USD": 1.2}}
-    with patch("requests.get", return_value=mock_response):
-        with pytest.raises(ValueError):
-            convert_to_rub({"amount": 10, "currency": "USD"})
+class TestConvertToRub(unittest.TestCase):
+    """Тесты функции convert_to_rub."""
+
+    @patch("src.external_api.requests.get")
+    def test_rub_currency_returns_same_amount(self, mock_get: Mock) -> None:
+        transaction: Dict[str, Any] = {"amount": "150", "currency": "RUB"}
+
+        result: float = convert_to_rub(transaction)
+
+        self.assertEqual(result, 150.0)
+        mock_get.assert_not_called()
+
+    @patch("src.external_api.requests.get")
+    def test_non_rub_currency_successful_conversion(
+        self, mock_get: Mock
+    ) -> None:
+        transaction: Dict[str, Any] = {"amount": "200", "currency": "USD"}
+
+        mock_response: Mock = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "success": True,
+            "rates": {"RUB": 75.5},
+        }
+        mock_get.return_value = mock_response
+
+        expected: float = 200 * 75.5
+
+        result: float = convert_to_rub(transaction)
+
+        self.assertAlmostEqual(result, expected)
+
+        mock_get.assert_called_once_with(
+            ext_api.API_URL,
+            headers={"apikey": ext_api.API_KEY},
+            params={"base": "USD", "symbols": "RUB"},
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
