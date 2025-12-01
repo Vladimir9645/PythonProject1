@@ -1,6 +1,4 @@
-import traceback
 from pathlib import Path
-from typing import Callable
 
 import pytest
 
