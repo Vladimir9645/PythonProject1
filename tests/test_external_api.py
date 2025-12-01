@@ -1,8 +1,10 @@
+import os
 from unittest.mock import Mock, patch
-import pytest, os
 
-os.environ['API_KEY'] = 'test_key'
-os.environ['API_URL'] = 'https://mockapi.test'
+import pytest
+
+os.environ["API_KEY"] = "test_key"
+os.environ["API_URL"] = "https://mockapi.test"
 
 from src.external_api import convert_to_rub
 
