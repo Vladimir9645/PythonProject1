@@ -7,12 +7,12 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)  # Уровень логирования — DEBUG и выше
 
 # 2. Настраиваем FileHandler
-file_handler = logging.FileHandler('../logs/application.log', encoding='utf-8')
+file_handler = logging.FileHandler("../logs/application.log", encoding="utf-8")
 file_handler.setLevel(logging.DEBUG)
 
 # 3. Настраиваем форматтер: время, имя модуля, уровень, сообщение
 file_formatter = logging.Formatter(
-    '%(asctime)s %(name)s %(levelname)s %(message)s'
+    "%(asctime)s %(name)s %(levelname)s %(message)s"
 )
 file_handler.setFormatter(file_formatter)
 
