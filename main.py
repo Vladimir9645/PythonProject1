@@ -1,0 +1,113 @@
+import os
+from typing import Callable
+
+from src.financial_transactions_CSV import read_transactions_from_csv
+from src.financial_transactions_Excel import read_transactions_from_excel
+from src.generators import filter_by_currency
+from src.processing import filter_by_state, sort_by_date
+from src.utils import dictionary_with_transaction_data
+from src.widget import mask_account_card
+
+print("""
+Программа: Привет! Добро пожаловать в программу работы 
+с банковскими транзакциями. 
+""")
+BASE_DIR = os.path.dirname(__file__)
+status = ["EXECUTED", "CANCELED", "PENDING"]
+
+
+def main():
+    dict_file = {
+        1: dictionary_with_transaction_data,
+        2: read_transactions_from_csv,
+        3: read_transactions_from_excel
+    }
+    path_file = {1: BASE_DIR + "/data/operations.json",
+                 2: BASE_DIR + "/data/transactions.csv",
+                 3: BASE_DIR + "/data/transactions_excel.xlsx"}
+
+    transaction = []
+
+    while True:
+        print(
+            "Выберите необходимый пункт меню:\n"
+            "1. Получить информацию о транзакциях из JSON-файла\n"
+            "2. Получить информацию о транзакциях из CSV-файла\n"
+            "3. Получить информацию о транзакциях из XLSX-файла"
+        )
+
+        user_input_status = input
+        user_input: int = int(input())
+        get_func: Callable | None = dict_file.get(user_input)
+        if get_func:
+            print(get_func.__doc__)
+            path_: str = path_file.get(user_input)
+            transaction = get_func(path_)
+            break
+
+    while True:
+        print("Введите статус, по которому необходимо выполнить фильтрацию.\n"
+              f"Доступные для фильтровки статусы: {', '.join(status)}")
+        user_input_status: str = input().upper()
+        if user_input_status in status:
+            transaction = filter_by_state(transaction, user_input_status)
+            print(f"Операции отфильтрованы по статусу {user_input_status}")
+            break
+        else:
+            print(f"Статус операции '{user_input_status}' недоступен.")
+    print("Отсортировать операции по дате? Да/Нет")
+    user_input: bool = input().lower() == "да"
+    if user_input:
+        print("Отсортировать по возрастанию или по убыванию?")
+        user_sort_reverse: bool = input().lower() == "по убыванию"
+        transaction = sort_by_date(transaction, user_sort_reverse)
+
+    print("Выводить только рублевые транзакции? Да/Нет")
+    user_input: bool = input().lower() == "да"
+    if user_input:
+        transaction = list(filter_by_currency(transaction, "RUB"))
+    print("Отфильтровать список транзакций по определенному слову в описании? Да/Нет")
+    user_input: bool = input().lower() == "да"
+    if user_input:
+        print("Введите слово для фильтрации:")
+        user_word: str = input()
+        transaction = sort_by_date(transaction, user_word)
+    print("Распечатываю итоговый список транзакций...")
+    print(f"Всего банковских операций в выборке: {len(transaction)}")
+
+    for trans in transaction:
+        state = trans.get("state")
+        date = trans.get("date")
+        amount = trans.get("amount")
+        currency_name = trans.get("currency_name")
+        currency_code = trans.get("currency_code")
+        to_from = trans.get("from")
+        to = mask_account_card(trans.get("to"))
+        description = trans.get("description")
+        out_print = f"{date} {description}"
+        check_to = f"{to}"
+        check_from = " -> " + mask_account_card(to_from) if to_from else ""
+        summ_print = f" сумма {amount}{currency_name}."
+        print(f"{out_print}\n{check_to}{check_from}\n{summ_print}")
+
+        """
+            08.12.2019 Открытие вклада 
+            Счет **4321
+            Сумма: 40542 руб. 
+            
+            12.11.2019 Перевод с карты на карту
+            MasterCard 7771 27** **** 3727 -> Visa Platinum 1293 38** **** 9203
+            Сумма: 130 USD
+            
+            18.07.2018 Перевод организации 
+            Visa Platinum 7492 65** **** 7202 -> Счет **0034
+            Сумма: 8390 руб.
+            
+            03.06.2018 Перевод со счета на счет
+            Счет **2935 -> Счет **4321
+            Сумма: 8200 EUR
+            """
+
+
+if __name__ == "__main__":
+    main()

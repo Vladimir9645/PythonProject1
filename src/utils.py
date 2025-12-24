@@ -1,62 +1,97 @@
 import json
 import logging
 import os
+import re
 from typing import Any, Dict, List
 
-# Создаём отдельный логгер для модуля utils
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)  # уровень логирования не ниже DEBUG
+# 1. Получаем директорию, где лежит utils.py
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Настраиваем файловый хендлер
-file_handler = logging.FileHandler("../logs/application.log", encoding="utf-8")
+# 2. Формируем путь к папке logs относительно utils.py (на уровень выше)
+log_dir = os.path.join(current_dir, "..", "logs")
+
+# 3. Создаём папку logs, если её нет
+os.makedirs(log_dir, exist_ok=True)
+
+# 4. Полный путь к файлу лога
+log_file = os.path.join(log_dir, "application.log")
+
+# 5. Настраиваем обработчик логов
+json_handler = logging.FileHandler(log_file, encoding="utf-8")
 file_formatter = logging.Formatter(
     "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
-file_handler.setFormatter(file_formatter)
-logger.addHandler(file_handler)
+json_handler.setFormatter(file_formatter)
+
+# 6. Настройка логгера
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(json_handler)
 
 
-def dictionary_with_transaction_data(
-    file_path: str = os.path.join("data", "operations.json")
-) -> List[Dict[str, Any]]:
+
+def dictionary_with_transaction_data(filepath: str) -> List[Dict[str, Any]]:
+    """Для обработки выбран JSON-файл."""
     """
-    Загружает данные из файла и возвращает их списком операций.
-    Если файл отсутствует, пустой или содержит некорректный JSON,
-    возвращает пустой список.
+    right
+    {'id': '4967592.0', 'state': 'EXECUTED', 'date': '2021-11-21T16:57:36Z', 
+    'amount': '12868.0', 'currency_name': 'Ruble', 'currency_code': 'RUB', 
+    'from': 'Mastercard 4061237171643434', 'to': 'Visa 7539829899017635', 
+    'description': 'Перевод с карты на карту'}
+    
+    json
+    [{'id': 441945886, 'state': 'EXECUTED', 'date': '2019-08-26T10:50:58.294041', 
+    'operationAmount': {'amount': '31957.58', 'currency': {'name': 'руб.', 'code': 'RUB'}}, 
+    'description': 'Перевод организации', 
+    'from': 'Maestro 1596837868705199' 'to': 'Счет 64686473678894779589'}
     """
-    logger.debug(
-        "Вызов dictionary_with_transaction_data с file_path=%s", file_path
-    )
     try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            data = json.load(file)
-        if isinstance(data, list):
-            logger.info(
-                "Успешно загружено %d операций из %s", len(data), file_path
-            )
-            return data
-        else:
-            logger.error(
-                "Ожидался список операций в файле %s, получен %s",
-                file_path,
-                type(data).__name__,
-            )
-            return []
-    except FileNotFoundError as e:
-        logger.error("Файл не найден: %s", file_path, exc_info=e)
-        return []
-    except json.JSONDecodeError as e:
-        logger.error(
-            "Ошибка декодирования JSON в файле %s: %s",
-            file_path,
-            e,
-            exc_info=e,
-        )
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            data_1 = []
+            for transaction in data:
+                id_ = transaction.get("id")
+                state = transaction.get("state")
+                amount = transaction.get("operationAmount", {}).get("amount")
+                currency_name = transaction.get("operationAmount", {}).get("currency", {}).get("name")
+                currency_name = transaction.get("operationAmount", {}).get("currency", {}).get("code")
+                date = transaction.get("date")
+                descriptions = transaction.get("descriptions")
+                from_ = transaction.get("from")
+                to = transaction.get("to")
+                data.append({'id': transaction.get("id"),
+                             'state': transaction.get("state"),
+                             'date': transaction.get("date"),
+                             'amount': amount,
+                             'currency_name': currency_name,
+                             'currency_code': currency_name,
+                             'from': transaction.get("from") ,
+                             'to': transaction.get("to"),
+                             'description': transaction.get("descriptions")})
+        return data
+    except Exception as e:
+        print(f"Ошибка при чтении JSON: {e}")
         return []
 
+def process_bank_search(data: List[Dict[str, Any]], search: str) -> List[Dict[str, Any]]:
+    """Ищет операции, где в описании встречается заданная подстрока (без учёта регистра)."""
+    if not data or not search:
+        return []
+
+    pattern = re.compile(re.escape(search), re.IGNORECASE)
+    return [op for op in data if pattern.search(op.get("description", ""))]
+
+#operations = [
+ #   {"id": 1, "description": "Перевод 500 руб. другу"},
+ #   {"id": 2, "description": "Оплата интернета"},
+ #   {"id": 3, "description": "Покупка продуктов на 1000 руб."}
+#]
+
+#found = process_bank_search(operations, "500 руб")
+# Вернёт: [{"id": 1, "description": "Перевод 500 руб. другу"}]
 
 # Пример вызова функции
 if __name__ == "__main__":
     file_path = os.path.join("data", "operations.json")
     transactions = dictionary_with_transaction_data(file_path)
-    print(transactions)
+

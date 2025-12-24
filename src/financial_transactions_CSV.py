@@ -1,10 +1,11 @@
 import csv
 from typing import Dict, List
 
-file = r"C:\Users\Rudoruka\PycharmProjects\PythonProject1\src\data\transactions.csv"
+file_path_1 = r"C:\Users\Rudoruka\PycharmProjects\PythonProject1\src\data\transactions.csv"
 
 
 def read_transactions_from_csv(file: str) -> List[Dict[str, str]]:
+    """Для обработки выбран CSV-файл."""
     transactions: List[Dict[str, str]] = []
     with open(file, mode="r", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
@@ -12,5 +13,6 @@ def read_transactions_from_csv(file: str) -> List[Dict[str, str]]:
             transactions.append(row)
     return transactions
 
+transactions_1 = read_transactions_from_csv(file_path_1)
 
-print(read_transactions_from_csv(file))
+

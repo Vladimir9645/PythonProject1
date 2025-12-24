@@ -1,21 +1,17 @@
-import functools
-import traceback
-from typing import Any, Callable, Dict, Iterator, List, Optional
+from typing import Any, Dict, Iterator, List
 
 
-def filter_by_currency(
-    transactions: List[Dict[str, Any]], currency_code: str
-) -> List[Dict[str, Any]]:
-    filtered: List[Dict[str, Any]] = []
-    for transaction in transactions:
-        op_amount = transaction.get("operationAmount", {})
-        currency = op_amount.get("currency")
-        if currency and isinstance(currency, dict):
-            code = currency.get("code")
-            if code == currency_code:
-                filtered.append(transaction)
-    return filtered
-
+def filter_by_currency(list_data: list[dict], currency: str) -> Iterator[dict]:
+    """Фильтр по рублям"""
+    if len(list_data) == 0:
+        raise ValueError("Error lenght 'list_data'")
+    if len(currency) == 0:
+        raise ValueError("Error no data in 'currency'")
+    c_generator = (
+        transaction
+        for transaction in list_data if  transaction.get("currency_code", {}) == currency
+    )
+    return c_generator
 
 transactions = [
     {
@@ -80,13 +76,11 @@ transactions = [
     },
 ]
 
-usd_transactions = filter_by_currency(transactions, "USD")
-usd_iter = iter(usd_transactions)
-print(next(usd_iter))
+
 
 
 def transaction_descriptions(
-    transactions: List[Dict[str, Any]],
+    transaction: List[Dict[str, Any]],
 ) -> Iterator[str]:
     """
     Функция выводит описание каждой транзакции из списка.
@@ -103,13 +97,13 @@ print()  # Пустая строка.
 # чтобы разделить выводы
 
 # Вывод первых 5 описаний транзакций в нужном формате
-for _ in range(5):
-    print(next(descriptions))  # Последующие с отступом
+#for _ in range(5):
+   # print(next(descriptions))  # Последующие с отступом
 
 
 def card_number_generator(start: int, end: int) -> Iterator[str]:
     """Генератор номеров банковских карт
-    в формате XXXX XXXX XXXX XXXX.
+    в формате XXXX XXXX.
     Принимает начальное и конечное
     значения диапазона (целые числа),
     выдает номера карт в заданном
@@ -125,8 +119,8 @@ def card_number_generator(start: int, end: int) -> Iterator[str]:
 
 
 # Пустая строка.
-# что-бы разделить выводы
+# Что-бы разделить выводы
 print()
 # Пример использования
-for card_number in card_number_generator(1, 5):
-    print(card_number)
+#for card_number in card_number_generator(1, 5):
+   # print(card_number)

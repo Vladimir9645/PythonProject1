@@ -3,10 +3,11 @@ from typing import Dict, List
 import pandas as pd
 
 # Путь к файлу Excel
-file = r"C:\Users\Rudoruka\PycharmProjects\PythonProject1\src\data\transactions_excel.xlsx"
+file_path_2 = r"C:\Users\Rudoruka\PycharmProjects\PythonProject1\src\data\transactions_excel.xlsx"
 
 
 def read_transactions_from_excel(file_path: str) -> List[Dict[str, str]]:
+    """Для обработки выбран Excel-файл."""
     try:
         df = pd.read_excel(file_path)
         transactions: List[Dict[str, str]] = []
@@ -27,5 +28,6 @@ def read_transactions_from_excel(file_path: str) -> List[Dict[str, str]]:
 
 
 # Вызов функции и вывод результатов
-transactions = read_transactions_from_excel(file)
-print(transactions)
+transactions_2 = read_transactions_from_excel(file_path_2)
+
+
