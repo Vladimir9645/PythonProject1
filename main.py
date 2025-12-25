@@ -5,7 +5,7 @@ from src.financial_transactions_CSV import read_transactions_from_csv
 from src.financial_transactions_Excel import read_transactions_from_excel
 from src.generators import filter_by_currency
 from src.processing import filter_by_state, sort_by_date
-from src.utils import dictionary_with_transaction_data
+from src.utils import dictionary_with_transaction_data, process_bank_search
 from src.widget import mask_account_card
 
 print("""
@@ -36,13 +36,14 @@ def main():
             "3. Получить информацию о транзакциях из XLSX-файла"
         )
 
-        user_input_status = input
+        #user_input_status = input()
         user_input: int = int(input())
         get_func: Callable | None = dict_file.get(user_input)
         if get_func:
             print(get_func.__doc__)
             path_: str = path_file.get(user_input)
             transaction = get_func(path_)
+            print("я тут")
             break
 
     while True:
@@ -60,7 +61,7 @@ def main():
     if user_input:
         print("Отсортировать по возрастанию или по убыванию?")
         user_sort_reverse: bool = input().lower() == "по убыванию"
-        transaction = sort_by_date(transaction, user_sort_reverse)
+        transaction = sort_by_date(transaction, reverse=user_sort_reverse)
 
     print("Выводить только рублевые транзакции? Да/Нет")
     user_input: bool = input().lower() == "да"
@@ -71,7 +72,7 @@ def main():
     if user_input:
         print("Введите слово для фильтрации:")
         user_word: str = input()
-        transaction = sort_by_date(transaction, user_word)
+        transaction = process_bank_search(transaction, user_word)
     print("Распечатываю итоговый список транзакций...")
     print(f"Всего банковских операций в выборке: {len(transaction)}")
 
