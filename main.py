@@ -43,7 +43,6 @@ def main():
             print(get_func.__doc__)
             path_: str = path_file.get(user_input)
             transaction = get_func(path_)
-            print("я тут")
             break
 
     while True:

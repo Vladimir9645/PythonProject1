@@ -3,7 +3,7 @@ from typing import Dict, List
 import pandas as pd
 
 # Путь к файлу Excel
-file_path_2 = r"C:\Users\Rudoruka\PycharmProjects\PythonProject1\src\data\transactions_excel.xlsx"
+file_path_2 = r"data/transactions_excel.xlsx"
 
 
 def read_transactions_from_excel(file_path: str) -> List[Dict[str, str]]:

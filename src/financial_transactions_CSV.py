@@ -1,7 +1,7 @@
 import csv
 from typing import Dict, List
 
-file_path_1 = r"C:\Users\Rudoruka\PycharmProjects\PythonProject1\src\data\transactions.csv"
+file_path_1 = r"data/transactions.csv"
 
 
 def read_transactions_from_csv(file: str) -> List[Dict[str, str]]:

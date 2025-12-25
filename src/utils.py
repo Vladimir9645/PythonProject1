@@ -50,25 +50,20 @@ def dictionary_with_transaction_data(filepath: str) -> List[Dict[str, Any]]:
             data = json.load(f)
             data_1 = []
             for transaction in data:
-                id_ = transaction.get("id")
-                state = transaction.get("state")
                 amount = transaction.get("operationAmount", {}).get("amount")
+
                 currency_name = transaction.get("operationAmount", {}).get("currency", {}).get("name")
-                currency_name = transaction.get("operationAmount", {}).get("currency", {}).get("code")
-                date = transaction.get("date")
-                descriptions = transaction.get("descriptions")
-                from_ = transaction.get("from")
-                to = transaction.get("to")
-                data.append({'id': transaction.get("id"),
+                currency_code = transaction.get("operationAmount", {}).get("currency", {}).get("code")
+                data_1.append({'id': transaction.get("id"),
                              'state': transaction.get("state"),
                              'date': transaction.get("date"),
                              'amount': amount,
                              'currency_name': currency_name,
-                             'currency_code': currency_name,
+                             'currency_code': currency_code,
                              'from': transaction.get("from") ,
                              'to': transaction.get("to"),
                              'description': transaction.get("descriptions")})
-        return data
+        return data_1
     except Exception as e:
         print(f"Ошибка при чтении JSON: {e}")
         return []
