@@ -2,13 +2,20 @@ from datetime import datetime
 from typing import Any, Dict, List
 
 
-
-def filter_by_state(list_data: list[dict], state: str = "EXECUTED") -> List[dict]:
+def filter_by_state(
+    list_data: list[dict], state: str = "EXECUTED"
+) -> List[dict]:
     """Фильтрует транзакции по полю 'state' (с отладкой)."""
-    return [dict_data_state for dict_data_state in list_data if dict_data_state.get('state', "") == state]
+    return [
+        dict_data_state
+        for dict_data_state in list_data
+        if dict_data_state.get("state", "") == state
+    ]
 
 
-def process_bank_operations(data: List[Dict[str, Any]], categories: List[str]) -> Dict[str, int]:
+def process_bank_operations(
+    data: List[Dict[str, Any]], categories: List[str]
+) -> Dict[str, int]:
     """
     Подсчитывает количество операций в каждой из указанных категорий.
     Категория определяется по наличию подстроки в поле 'description'.
@@ -37,16 +44,17 @@ def process_bank_operations(data: List[Dict[str, Any]], categories: List[str]) -
     return result
 
 
-#operations = [
- #   {"id": 1, "description": "Перевод другу 500 руб."},
-  #  {"id": 2, "description": "Оплата интернета МТС"},
-   # {"id": 3, "description": "Покупка продуктов в Пятёрочке"},
-    #{"id": 4, "description": "Перевод сестре 1000 руб."}
-#]
+# operations = [
+#   {"id": 1, "description": "Перевод другу 500 руб."},
+#  {"id": 2, "description": "Оплата интернета МТС"},
+# {"id": 3, "description": "Покупка продуктов в Пятёрочке"},
+# {"id": 4, "description": "Перевод сестре 1000 руб."}
+# ]
 
-#categories = ["перевод", "оплата", "покупка"]
-#counts = process_bank_operations(operations, categories)
+# categories = ["перевод", "оплата", "покупка"]
+# counts = process_bank_operations(operations, categories)
 # Вернёт: {"перевод": 2, "оплата": 1, "покупка": 1}
+
 
 def sort_by_date(
     dictionary_2: List[Dict[str, Any]],

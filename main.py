@@ -37,7 +37,7 @@ def main():
         )
 
         #user_input_status = input()
-        user_input: int = int(input())
+        user_input: int = int(input("Пользователь: "))
         get_func: Callable | None = dict_file.get(user_input)
         if get_func:
             print(get_func.__doc__)
@@ -48,7 +48,7 @@ def main():
     while True:
         print("Введите статус, по которому необходимо выполнить фильтрацию.\n"
               f"Доступные для фильтровки статусы: {', '.join(status)}")
-        user_input_status: str = input().upper()
+        user_input_status: str = input("Пользователь: ").upper()
         if user_input_status in status:
             transaction = filter_by_state(transaction, user_input_status)
             print(f"Операции отфильтрованы по статусу {user_input_status}")
@@ -56,21 +56,21 @@ def main():
         else:
             print(f"Статус операции '{user_input_status}' недоступен.")
     print("Отсортировать операции по дате? Да/Нет")
-    user_input: bool = input().lower() == "да"
+    user_input: bool = input("Пользователь: ").lower() == "да"
     if user_input:
         print("Отсортировать по возрастанию или по убыванию?")
-        user_sort_reverse: bool = input().lower() == "по убыванию"
+        user_sort_reverse: bool = input("Пользователь: ").lower() == "по убыванию"
         transaction = sort_by_date(transaction, reverse=user_sort_reverse)
 
     print("Выводить только рублевые транзакции? Да/Нет")
-    user_input: bool = input().lower() == "да"
+    user_input: bool = input("Пользователь: ").lower() == "да"
     if user_input:
         transaction = list(filter_by_currency(transaction, "RUB"))
     print("Отфильтровать список транзакций по определенному слову в описании? Да/Нет")
-    user_input: bool = input().lower() == "да"
+    user_input: bool = input("Пользователь: ").lower() == "да"
     if user_input:
         print("Введите слово для фильтрации:")
-        user_word: str = input()
+        user_word: str = input("Пользователь: ")
         transaction = process_bank_search(transaction, user_word)
     print("Распечатываю итоговый список транзакций...")
     print(f"Всего банковских операций в выборке: {len(transaction)}")

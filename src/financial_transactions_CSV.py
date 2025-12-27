@@ -1,7 +1,10 @@
 import csv
 from typing import Dict, List
+import os
 
-file_path_1 = r"data/transactions.csv"
+# Путь от директории текущего скрипта
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path_1 = os.path.join(current_dir, "..", "data", "transactions.csv")
 
 
 def read_transactions_from_csv(file: str) -> List[Dict[str, str]]:
@@ -13,6 +16,6 @@ def read_transactions_from_csv(file: str) -> List[Dict[str, str]]:
             transactions.append(row)
     return transactions
 
-transactions_1 = read_transactions_from_csv(file_path_1)
 
-
+#transaction = read_transactions_from_csv(file_path_1)
+#print(transaction)

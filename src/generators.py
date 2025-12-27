@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterator, List
+from typing import Iterator
 
 
 def filter_by_currency(list_data: list[dict], currency: str) -> Iterator[dict]:
@@ -9,9 +9,11 @@ def filter_by_currency(list_data: list[dict], currency: str) -> Iterator[dict]:
         raise ValueError("Error no data in 'currency'")
     c_generator = (
         transaction
-        for transaction in list_data if  transaction.get("currency_code", {}) == currency
+        for transaction in list_data
+        if transaction.get("currency_code", {}) == currency
     )
     return c_generator
+
 
 transactions = [
     {
@@ -77,28 +79,32 @@ transactions = [
 ]
 
 
+from typing import Any, Dict, Iterator, List
 
 
 def transaction_descriptions(
-    transaction: List[Dict[str, Any]],
+    transaction_list: List[Dict[str, Any]],
 ) -> Iterator[str]:
-    """
-    Функция выводит описание каждой транзакции из списка.
-    """
-    for transaction in transactions:
+    """Функция выводит описание каждой транзакции из списка."""
+    for transaction in transaction_list:
         try:
-            yield transaction["description"]
+            description = transaction["description"]
+            if isinstance(description, str):
+                yield description
+            else:
+                yield str(description)
         except KeyError:
             continue
 
 
 descriptions = transaction_descriptions(transactions)
-print()  # Пустая строка.
+print()
+
 # чтобы разделить выводы
 
 # Вывод первых 5 описаний транзакций в нужном формате
-#for _ in range(5):
-   # print(next(descriptions))  # Последующие с отступом
+# for _ in range(5):
+# print(next(descriptions))  # Последующие с отступом
 
 
 def card_number_generator(start: int, end: int) -> Iterator[str]:
@@ -114,7 +120,7 @@ def card_number_generator(start: int, end: int) -> Iterator[str]:
         # Форматируем число с ведущими нулями до 16 цифр
         card_str = f"{number:016d}"
         # Разбиваем на группы по 4 символа и соединяем через пробел
-        formatted = " ".join(card_str[i:i + 4] for i in range(0, 16, 4))
+        formatted = " ".join(card_str[i : i + 4] for i in range(0, 16, 4))
         yield formatted
 
 
@@ -122,5 +128,5 @@ def card_number_generator(start: int, end: int) -> Iterator[str]:
 # Что-бы разделить выводы
 print()
 # Пример использования
-#for card_number in card_number_generator(1, 5):
-   # print(card_number)
+# for card_number in card_number_generator(1, 5):
+# print(card_number)

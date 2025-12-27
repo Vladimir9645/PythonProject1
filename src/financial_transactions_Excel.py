@@ -1,9 +1,12 @@
 from typing import Dict, List
 
 import pandas as pd
+import os
 
-# Путь к файлу Excel
-file_path_2 = r"data/transactions_excel.xlsx"
+# Путь от директории текущего скрипта
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(current_dir, "..", "data", "transactions_excel.xlsx")
+
 
 
 def read_transactions_from_excel(file_path: str) -> List[Dict[str, str]]:
@@ -28,6 +31,5 @@ def read_transactions_from_excel(file_path: str) -> List[Dict[str, str]]:
 
 
 # Вызов функции и вывод результатов
-transactions_2 = read_transactions_from_excel(file_path_2)
-
-
+#transactions_2 = read_transactions_from_excel(file_path)
+#print(transactions_2)

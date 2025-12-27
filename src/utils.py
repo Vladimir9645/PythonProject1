@@ -29,7 +29,6 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(json_handler)
 
 
-
 def dictionary_with_transaction_data(filepath: str) -> List[Dict[str, Any]]:
     """Для обработки выбран JSON-файл."""
     """
@@ -52,23 +51,38 @@ def dictionary_with_transaction_data(filepath: str) -> List[Dict[str, Any]]:
             for transaction in data:
                 amount = transaction.get("operationAmount", {}).get("amount")
 
-                currency_name = transaction.get("operationAmount", {}).get("currency", {}).get("name")
-                currency_code = transaction.get("operationAmount", {}).get("currency", {}).get("code")
-                data_1.append({'id': transaction.get("id"),
-                             'state': transaction.get("state"),
-                             'date': transaction.get("date"),
-                             'amount': amount,
-                             'currency_name': currency_name,
-                             'currency_code': currency_code,
-                             'from': transaction.get("from") ,
-                             'to': transaction.get("to"),
-                             'description': transaction.get("descriptions")})
+                currency_name = (
+                    transaction.get("operationAmount", {})
+                    .get("currency", {})
+                    .get("name")
+                )
+                currency_code = (
+                    transaction.get("operationAmount", {})
+                    .get("currency", {})
+                    .get("code")
+                )
+                data_1.append(
+                    {
+                        "id": transaction.get("id"),
+                        "state": transaction.get("state"),
+                        "date": transaction.get("date"),
+                        "amount": amount,
+                        "currency_name": currency_name,
+                        "currency_code": currency_code,
+                        "from": transaction.get("from"),
+                        "to": transaction.get("to"),
+                        "description": transaction.get("descriptions"),
+                    }
+                )
         return data_1
     except Exception as e:
         print(f"Ошибка при чтении JSON: {e}")
         return []
 
-def process_bank_search(data: List[Dict[str, Any]], search: str) -> List[Dict[str, Any]]:
+
+def process_bank_search(
+    data: List[Dict[str, Any]], search: str
+) -> List[Dict[str, Any]]:
     """Ищет операции, где в описании встречается заданная подстрока (без учёта регистра)."""
     if not data or not search:
         return []
@@ -76,17 +90,10 @@ def process_bank_search(data: List[Dict[str, Any]], search: str) -> List[Dict[st
     pattern = re.compile(re.escape(search), re.IGNORECASE)
     return [op for op in data if pattern.search(op.get("description", ""))]
 
-#operations = [
- #   {"id": 1, "description": "Перевод 500 руб. другу"},
- #   {"id": 2, "description": "Оплата интернета"},
- #   {"id": 3, "description": "Покупка продуктов на 1000 руб."}
-#]
 
-#found = process_bank_search(operations, "500 руб")
-# Вернёт: [{"id": 1, "description": "Перевод 500 руб. другу"}]
+
 
 # Пример вызова функции
 if __name__ == "__main__":
     file_path = os.path.join("data", "operations.json")
     transactions = dictionary_with_transaction_data(file_path)
-
