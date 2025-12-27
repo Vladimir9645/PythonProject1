@@ -33,16 +33,24 @@ def dictionary_with_transaction_data(filepath: str) -> List[Dict[str, Any]]:
     """Для обработки выбран JSON-файл."""
     """
     right
-    {'id': '4967592.0', 'state': 'EXECUTED', 'date': '2021-11-21T16:57:36Z', 
-    'amount': '12868.0', 'currency_name': 'Ruble', 'currency_code': 'RUB', 
-    'from': 'Mastercard 4061237171643434', 'to': 'Visa 7539829899017635', 
-    'description': 'Перевод с карты на карту'}
-    
+    [
+    {'id': '4967592.0', 'state': 'EXECUTED',
+    'date': '2021-11-21T16:57:36Z',
+    'amount': '12868.0','currency_name': 'Ruble',
+    'currency_code': 'RUB',
+    'from': 'Mastercard 4061237171643434',
+    'to': 'Visa 7539829899017635',
+    'description': 'Перевод с карты на карту'}]
     json
-    [{'id': 441945886, 'state': 'EXECUTED', 'date': '2019-08-26T10:50:58.294041', 
-    'operationAmount': {'amount': '31957.58', 'currency': {'name': 'руб.', 'code': 'RUB'}}, 
-    'description': 'Перевод организации', 
-    'from': 'Maestro 1596837868705199' 'to': 'Счет 64686473678894779589'}
+    [
+    {'id': 441945886, 'state': 'EXECUTED',
+    'date': '2019-08-26T10:50:58.294041',
+    'operationAmount': {'amount': '31957.58',
+    'currency': {'name': 'руб.', 'code': 'RUB'}},
+    'description': 'Перевод организации',
+    'from': 'Maestro 1596837868705199'
+    'to': 'Счет 64686473678894779589'}
+    ]
     """
     try:
         with open(filepath, "r", encoding="utf-8") as f:
@@ -89,8 +97,6 @@ def process_bank_search(
 
     pattern = re.compile(re.escape(search), re.IGNORECASE)
     return [op for op in data if pattern.search(op.get("description", ""))]
-
-
 
 
 # Пример вызова функции

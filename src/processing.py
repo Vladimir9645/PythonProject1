@@ -105,7 +105,7 @@ filtered = filter_by_state(dictionary, "EXECUTED")
 # Сортируем отфильтрованные данные по дате
 sorted_filtered = sort_by_date(filtered)
 # Выводим отсортированные данные для состояния 'EXECUTED'
-#print(sorted_filtered)
+# print(sorted_filtered)
 
 
 # Фильтруем словарь по состоянию 'CANCELED'
@@ -113,10 +113,10 @@ filtered = filter_by_state(dictionary, "CANCELED")
 # Сортируем отфильтрованные данные по дате
 sorted_filtered = sort_by_date(filtered)
 # Выводим отсортированные данные для состояния 'CANCELED'
-#print(sorted_filtered)
+# print(sorted_filtered)
 # пустая строка
-#print()
+# print()
 
 # Использование функции сортировки
 sorted_events = sort_by_date(dictionary, "date")
-#print(sorted_events)
+# print(sorted_events)

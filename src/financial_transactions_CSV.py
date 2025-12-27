@@ -1,6 +1,6 @@
 import csv
-from typing import Dict, List
 import os
+from typing import Dict, List
 
 # Путь от директории текущего скрипта
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -17,5 +17,5 @@ def read_transactions_from_csv(file: str) -> List[Dict[str, str]]:
     return transactions
 
 
-#transaction = read_transactions_from_csv(file_path_1)
-#print(transaction)
+transaction = read_transactions_from_csv(file_path_1)
+# print(transaction)

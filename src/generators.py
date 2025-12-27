@@ -1,18 +1,21 @@
 from typing import Iterator
 
 
-def filter_by_currency(list_data: list[dict], currency: str) -> Iterator[dict]:
-    """Фильтр по рублям"""
-    if len(list_data) == 0:
-        raise ValueError("Error lenght 'list_data'")
-    if len(currency) == 0:
-        raise ValueError("Error no data in 'currency'")
-    c_generator = (
-        transaction
-        for transaction in list_data
-        if transaction.get("currency_code", {}) == currency
-    )
-    return c_generator
+def filter_by_currency(list_data, currency):
+    if not isinstance(list_data, list):
+        return []  # логируем ошибку
+
+    if len(list_data) == 0:  # или просто if not list_data:
+        return []  # просто возвращаем пустой результат
+
+    # основная логика фильтрации
+    filtered = [
+        item
+        for item in list_data
+        if item.get("currency_code") == currency
+        or item.get("currency_name") == currency
+    ]
+    return filtered
 
 
 transactions = [
@@ -79,7 +82,7 @@ transactions = [
 ]
 
 
-from typing import Any, Dict, Iterator, List
+from typing import Any, Dict, List
 
 
 def transaction_descriptions(
@@ -100,16 +103,10 @@ def transaction_descriptions(
 descriptions = transaction_descriptions(transactions)
 print()
 
-# чтобы разделить выводы
-
-# Вывод первых 5 описаний транзакций в нужном формате
-# for _ in range(5):
-# print(next(descriptions))  # Последующие с отступом
-
 
 def card_number_generator(start: int, end: int) -> Iterator[str]:
     """Генератор номеров банковских карт
-    в формате XXXX XXXX.
+    в формате XXXX-XXXX.
     Принимает начальное и конечное
     значения диапазона (целые числа),
     выдает номера карт в заданном
