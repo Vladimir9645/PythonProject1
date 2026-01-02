@@ -3,9 +3,9 @@ from typing import Callable
 
 from src.financial_transactions_CSV import read_transactions_from_csv
 from src.financial_transactions_Excel import read_transactions_from_excel
-from src.generators import filter_by_currency
+from src.generators import filter_by_currency, transaction_descriptions
 from src.processing import filter_by_state, sort_by_date
-from src.utils import dictionary_with_transaction_data, process_bank_search
+from src.utils import dictionary_with_transaction_data
 from src.widget import mask_account_card
 
 print("""
@@ -71,7 +71,7 @@ def main():
     if user_input:
         print("Введите слово для фильтрации:")
         user_word: str = input("Пользователь: ")
-        transaction = process_bank_search(transaction, user_word)
+        transaction = transaction_descriptions(transaction, user_word)
     print("Распечатываю итоговый список транзакций...")
     print(f"Всего банковских операций в выборке: {len(transaction)}")
 

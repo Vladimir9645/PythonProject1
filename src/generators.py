@@ -85,22 +85,40 @@ transactions = [
 from typing import Any, Dict, List
 
 
-def transaction_descriptions(
-    transaction_list: List[Dict[str, Any]],
-) -> Iterator[str]:
-    """Функция выводит описание каждой транзакции из списка."""
-    for transaction in transaction_list:
-        try:
-            description = transaction["description"]
-            if isinstance(description, str):
-                yield description
-            else:
-                yield str(description)
-        except KeyError:
-            continue
+def transaction_descriptions(list_data, descriptions=None):
+    """
+    Фильтрует транзакции по списку допустимых описаний.
 
+    Args:
+        list_data (list): список транзакций (словарей)
+        descriptions (list of str, optional): список допустимых описаний.
+            Если None, используется значение User_transfers.
 
-descriptions = transaction_descriptions(transactions)
+    Returns:
+        list: отфильтрованный список транзакций, где item['description']
+            присутствует в descriptions
+    """
+    # Устанавливаем дефолтное значение для descriptions
+    if descriptions is None:
+        descriptions = transactions  # предполагаем, что User_transfers определён глобально
+
+    # Проверка типа list_data
+    if not isinstance(list_data, list):
+        print("Ошибка: list_data должен быть списком")
+        return []
+
+    # Фильтрация: берём транзакции, где description есть в списке допустимых
+    filtered = [
+        item for item in list_data
+        if (
+            isinstance(item, dict) and
+            "description" in item and
+            item["description"] in descriptions
+        )
+    ]
+
+    return filtered
+
 print()
 
 
@@ -121,9 +139,12 @@ def card_number_generator(start: int, end: int) -> Iterator[str]:
         yield formatted
 
 
+
 # Пустая строка.
 # Что-бы разделить выводы
 print()
 # Пример использования
 # for card_number in card_number_generator(1, 5):
 # print(card_number)
+def find_by_description():
+    return list
