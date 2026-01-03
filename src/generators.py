@@ -85,36 +85,21 @@ transactions = [
 from typing import Any, Dict, List
 
 
-def transaction_descriptions(list_data, descriptions=None):
+def transaction_descriptions(list_data, description):
     """
     Фильтрует транзакции по списку допустимых описаний.
-
-    Args:
-        list_data (list): список транзакций (словарей)
-        descriptions (list of str, optional): список допустимых описаний.
-            Если None, используется значение User_transfers.
-
-    Returns:
-        list: отфильтрованный список транзакций, где item['description']
-            присутствует в descriptions
     """
-    # Устанавливаем дефолтное значение для descriptions
-    if descriptions is None:
-        descriptions = transactions  # предполагаем, что User_transfers определён глобально
-
-    # Проверка типа list_data
     if not isinstance(list_data, list):
-        print("Ошибка: list_data должен быть списком")
-        return []
+        return []  # логируем ошибку
+
+    if len(list_data) == 0:  # или просто if not list_data:
+        return []  # просто возвращаем пустой результат
 
     # Фильтрация: берём транзакции, где description есть в списке допустимых
     filtered = [
-        item for item in list_data
-        if (
-            isinstance(item, dict) and
-            "description" in item and
-            item["description"] in descriptions
-        )
+        item
+        for item in list_data
+        if item.get ("description") == description
     ]
 
     return filtered
