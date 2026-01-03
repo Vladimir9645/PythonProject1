@@ -31,4 +31,4 @@ def read_transactions_from_excel(file_path: str) -> List[Dict[str, str]]:
 
 # Вызов функции и вывод результатов
 transactions_2 = read_transactions_from_excel(file_path)
-# print(transactions_2)
+print(transactions_2)

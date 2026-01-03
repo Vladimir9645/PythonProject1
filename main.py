@@ -15,6 +15,10 @@ print("""
 BASE_DIR = os.path.dirname(__file__)
 status = ["EXECUTED", "CANCELED", "PENDING"]
 
+words_users = [
+    "Открытие вклада", "Перевод с карты на карту",
+    "Перевод организации", "Перевод со счета на счет"
+]
 
 def main():
     dict_file = {
@@ -70,8 +74,8 @@ def main():
     user_input: bool = input("Пользователь: ").lower() == "да"
     if user_input:
         print("Введите слово для фильтрации:")
-        user_word: str = input("Пользователь: ")
-        transaction = transaction_descriptions(transaction, user_word)
+        user_word: bool = input("Пользователь: ").lower() == words_users
+        transaction = list(transaction_descriptions(transaction, user_word))
     print("Распечатываю итоговый список транзакций...")
     print(f"Всего банковских операций в выборке: {len(transaction)}")
 

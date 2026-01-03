@@ -59,15 +59,39 @@ def process_bank_operations(
 def sort_by_date(
     dictionary_2: List[Dict[str, Any]],
     date_key: str = "date",
-    date_format: str = "%Y-%m-%dT%H:%M:%S.%f",
+    date_formats: List[str] = None,
     reverse: bool = True,
 ) -> List[Dict[str, Any]]:
-    """Сортирует список словарей по дате,
-    учитывая формат даты с временем и миллисекундами"""
+    """
+    Сортирует список словарей по дате, пробуя несколько форматов.
+    Записи с невалидной датой помещаются в конец (при reverse=False) или начало (при reverse=True).
+    """
+    if date_formats is None:
+        date_formats = [
+            "%Y-%m-%dT%H:%M:%S.%fZ",
+            "%Y-%m-%dT%H:%M:%SZ",
+            "%Y-%m-%d %H:%M:%S",
+            "%d.%m.%Y %H:%M:%S",
+            "%Y-%m-%d",
+        ]
+
+    def parse_date(date_str: str) -> datetime:
+        """Возвращает datetime или очень большое/маленькое значение для сортировки."""
+        for fmt in date_formats:
+            try:
+                return datetime.strptime(date_str, fmt)
+            except ValueError:
+                continue
+        # Если дата не распознана:
+        if reverse:  # По убыванию → невалидные даты в начало
+            return datetime.min  # Минимальное возможное время
+        else:       # По возрастанию → невалидные даты в конец
+            return datetime.max  # Максимальное возможное время
+
     return sorted(
         dictionary_2,
-        key=lambda d: datetime.strptime(d[date_key], date_format),
-        reverse=reverse,
+        key=lambda d: parse_date(d.get(date_key, "")),
+        reverse=reverse
     )
 
 
