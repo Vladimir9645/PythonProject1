@@ -3,7 +3,7 @@ from typing import Callable
 
 from src.financial_transactions_CSV import read_transactions_from_csv
 from src.financial_transactions_Excel import read_transactions_from_excel
-from src.generators import filter_by_currency, transaction_descriptions
+from src.generators import filter_by_currency
 from src.processing import filter_by_state, sort_by_date
 from src.utils import dictionary_with_transaction_data
 from src.widget import mask_account_card
@@ -15,7 +15,7 @@ print("""
 BASE_DIR = os.path.dirname(__file__)
 status = ["EXECUTED", "CANCELED", "PENDING"]
 
-words_users = [
+words_users: list[str] = [
     "Открытие вклада", "Перевод с карты на карту",
     "Перевод организации", "Перевод со счета на счет"
 ]
@@ -74,10 +74,20 @@ def main():
     user_input: bool = input("Пользователь: ").lower() == "да"
     if user_input:
         print("Введите слово для фильтрации:")
-        user_word: bool = input("Пользователь: ").lower() == words_users
-        transaction = list(transaction_descriptions(transaction, user_word))
-    print("Распечатываю итоговый список транзакций...")
-    print(f"Всего банковских операций в выборке: {len(transaction)}")
+        search_word: str = input("Пользователь: ").strip().lower()
+
+        # Фильтруем транзакции: ищем слово в поле 'description'
+        filtered_transactions = [
+            trans for trans in transaction
+            if (
+                    search_word in str(trans.get("description", "")).lower() or
+                    search_word in str(trans.get("from", "")).lower() or
+                    search_word in str(trans.get("to", "")).lower()
+                )
+        ]
+
+        print("Распечатываю итоговый список транзакций...")
+        print(f"Всего банковских операций в выборке: {len(filtered_transactions)}")
 
     for trans in transaction:
         state = trans.get("state")

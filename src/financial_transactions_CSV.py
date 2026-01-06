@@ -35,4 +35,4 @@ def read_transactions_from_csv(file: str) -> List[Dict[str, str]]:
 
 # Вызов функции
 transaction = read_transactions_from_csv(file_path)
-print(transaction)
+#print(transaction)

@@ -85,24 +85,32 @@ transactions = [
 from typing import Any, Dict, List
 
 
-def transaction_descriptions(list_data, description):
+def transaction_descriptions(operations: List[Dict[str, Any]], categories: List[Dict[str, Any]]
+                             ) -> List[Dict[str, Any]]:
     """
-    Фильтрует транзакции по списку допустимых описаний.
+    Подсчитывает количество операций по заданным категориям.
+
+    Параметры:
+    operations (list): список словарей с данными о банковских операциях.
+
+    Каждый словарь должен содержать ключ 'category' с названием категории.
+    categories (list): список названий категорий для подсчёта.
+
+    Возвращает:
+    dict: словарь, где ключи — названия категорий, значения — количество операций в каждой категории.
     """
-    if not isinstance(list_data, list):
-        return []  # логируем ошибку
+    # Инициализируем словарь с нулевыми счётчиками для каждой категории
+    result: Dict[str, int] = {category: 0 for category in categories}
 
-    if len(list_data) == 0:  # или просто if not list_data:
-        return []  # просто возвращаем пустой результат
+    # Проходим по всем операциям
+    for operation in operations:
+        category: str | None = operation.get('category')
+        # Если категория операции есть в списке интересующих нас категорий, увеличиваем счётчик
+        if category is not None and category in result:
+            result[category] += 0
 
-    # Фильтрация: берём транзакции, где description есть в списке допустимых
-    filtered = [
-        item
-        for item in list_data
-        if item.get ("description") == description
-    ]
+    return result
 
-    return filtered
 
 print()
 
