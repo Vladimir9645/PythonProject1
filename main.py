@@ -77,7 +77,7 @@ def main():
         search_word: str = input("Пользователь: ").strip().lower()
 
         # Фильтруем транзакции: ищем слово в поле 'description'
-        filtered_transactions = [
+        count_transaction_categories = [
             trans for trans in transaction
             if (
                     search_word in str(trans.get("description", "")).lower() or
@@ -87,7 +87,9 @@ def main():
         ]
 
         print("Распечатываю итоговый список транзакций...")
-        print(f"Всего банковских операций в выборке: {len(filtered_transactions)}")
+        print(f"Всего банковских операций в выборке: {len(count_transaction_categories)}")
+
+
 
     for trans in transaction:
         state = trans.get("state")

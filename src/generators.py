@@ -85,29 +85,24 @@ transactions = [
 from typing import Any, Dict, List
 
 
-def transaction_descriptions(operations: List[Dict[str, Any]], categories: List[Dict[str, Any]]
-                             ) -> List[Dict[str, Any]]:
+def count_transaction_categories(
+    data: List[Dict[str, Any]], categories: List[str]
+) -> Dict[str, int]:
     """
-    Подсчитывает количество операций по заданным категориям.
-
-    Параметры:
-    operations (list): список словарей с данными о банковских операциях.
-
-    Каждый словарь должен содержать ключ 'category' с названием категории.
-    categories (list): список названий категорий для подсчёта.
-
-    Возвращает:
-    dict: словарь, где ключи — названия категорий, значения — количество операций в каждой категории.
+    Подсчитывает количество операций в каждой из указанных категорий.
+    Категория определяется по наличию подстроки в поле 'description'.
     """
-    # Инициализируем словарь с нулевыми счётчиками для каждой категории
-    result: Dict[str, int] = {category: 0 for category in categories}
+    if not data or not categories:
+        return {category: 0 for category in categories}
 
-    # Проходим по всем операциям
-    for operation in operations:
-        category: str | None = operation.get('category')
-        # Если категория операции есть в списке интересующих нас категорий, увеличиваем счётчик
-        if category is not None and category in result:
-            result[category] += 0
+    # Инициализируем словарь результатов
+    result = {category: 0 for category in categories}
+
+    for operation in data:
+        description = operation.get("description", "").lower()
+        for category in categories:
+            if category.lower() in description:
+                result[category] += 1
 
     return result
 
