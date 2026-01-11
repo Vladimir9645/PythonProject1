@@ -87,8 +87,11 @@ def main():
         ]
 
         print("Распечатываю итоговый список транзакций...")
-        print(f"Всего банковских операций в выборке: {(count_operations_by_category(transaction_categories, words_users))}")
+        print(f"Всего банковских операций в выборке: {(count_operations_by_category(transaction_categories, search_word))}")
 
+        if not transaction_categories:
+            print("По вашему запросу транзакции не найдены.")
+            return
 
     for trans in transaction:
         state = trans.get("state")
@@ -108,7 +111,6 @@ def main():
         check_from = " -> " + mask_account_card(to_from) if to_from else ""
         summ_print = f" сумма {amount}{currency_name}."
         print(f"{out_print}\n{check_to}{check_from}\n{summ_print}")
-        print(trans)
         """
             08.12.2019 Открытие вклада 
             Счет **4321

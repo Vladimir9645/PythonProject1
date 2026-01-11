@@ -79,7 +79,7 @@ def dictionary_with_transaction_data(filepath: str) -> List[Dict[str, Any]]:
                         "currency_code": currency_code,
                         "from": transaction.get("from"),
                         "to": transaction.get("to"),
-                        "description": transaction.get("descriptions"),
+                        "description": transaction.get("description"),
                     }
                 )
         return data_1

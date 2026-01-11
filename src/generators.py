@@ -106,6 +106,9 @@ transactions = [
     },
 ]
 
+from collections import Counter
+from typing import List, Dict, Any
+
 
 def count_operations_by_category(transactions: List[Dict[str, Any]],
                                  categories: List[str]
