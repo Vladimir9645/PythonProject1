@@ -1,20 +1,45 @@
+import logging
 from typing import Iterator
+from collections import Counter
+from typing import List, Dict, Any
+from src.widget import mask_account_card
 
 
 def filter_by_currency(list_data, currency):
+    """
+    Фильтрует список транзакций по валюте (код или название).
+    Args:
+        list_data (list): список транзакций (словарей)
+        currency (str): код или название валюты (например, "RUB", "руб.")
+    Returns:
+        list: отфильтрованные транзакции
+    """
+    # Проверка типа входных данных
     if not isinstance(list_data, list):
-        return []  # логируем ошибку
+        logging.warning("list_data не является списком. Возвращается пустой список.")
+        return []
 
-    if len(list_data) == 0:  # или просто if not list_data:
-        return []  # просто возвращаем пустой результат
+    if not list_data:
+        return []  # Пустой список на входе → пустой на выходе
 
-    # основная логика фильтрации
-    filtered = [
-        item
-        for item in list_data
-        if item.get("currency_code") == currency
-        or item.get("currency_name") == currency
-    ]
+    # Нормализация искомой валюты (удаление пробелов, нижний регистр)
+    currency_normalized = currency.strip().lower()
+
+    filtered = []
+    for item in list_data:
+        # Защита от None в списке
+        if item is None:
+            logging.debug("Найден None в list_data. Пропускаем.")
+            continue
+
+        # Получаем значения полей (с дефолтом "")
+        code = str(item.get("currency_code", "")).strip().lower()
+        name = str(item.get("currency_name", "")).strip().lower()
+
+        # Проверка на совпадение
+        if code == currency_normalized or name == currency_normalized:
+            filtered.append(item)
+
     return filtered
 
 
@@ -82,27 +107,37 @@ transactions = [
 ]
 
 
-from typing import Any, Dict, List
-
-
-def count_transaction_categories(
-    data: List[Dict[str, Any]], categories: List[str]
-) -> Dict[str, int]:
+def count_operations_by_category(transactions: List[Dict[str, Any]],
+                                 categories: List[str]
+                                 ) -> Dict[str, int]:
     """
-    Подсчитывает количество операций в каждой из указанных категорий.
-    Категория определяется по наличию подстроки в поле 'description'.
+    Подсчитывает количество банковских операций по заданным категориям.
     """
-    if not data or not categories:
-        return {category: 0 for category in categories}
+    # Инициализируем счётчик
+    counter = Counter()
 
-    # Инициализируем словарь результатов
-    result = {category: 0 for category in categories}
+    # Используем обычный словарь для подсчёта
+    counter: Dict[str, int] = {}
 
-    for operation in data:
-        description = operation.get("description", "").lower()
+    # Проходим по всем транзакциям
+    for transaction in transactions:
+        description = transaction.get("description", "").lower()
+        to_from = transaction.get("from")
+        to = mask_account_card(transaction.get("to"))
+        # Проверяем, к какой категории относится транзакция
         for category in categories:
             if category.lower() in description:
-                result[category] += 1
+                if category not in counter:
+                    counter[category] = 1
+                else:
+                    counter[category] += 1
+                break  # Зачёт только в одну категорию
+
+    # Формируем итоговый словарь (гарантируем наличие всех категорий)
+    result: Dict[str, int] = {
+        category: counter.get(category, 0)
+        for category in categories
+    }
 
     return result
 

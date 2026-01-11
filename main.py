@@ -3,10 +3,11 @@ from typing import Callable
 
 from src.financial_transactions_CSV import read_transactions_from_csv
 from src.financial_transactions_Excel import read_transactions_from_excel
-from src.generators import filter_by_currency
+from src.generators import filter_by_currency, count_operations_by_category
 from src.processing import filter_by_state, sort_by_date
 from src.utils import dictionary_with_transaction_data
 from src.widget import mask_account_card
+from datetime import datetime
 
 print("""
 Программа: Привет! Добро пожаловать в программу работы 
@@ -29,8 +30,6 @@ def main():
     path_file = {1: BASE_DIR + "/data/operations.json",
                  2: BASE_DIR + "/data/transactions.csv",
                  3: BASE_DIR + "/data/transactions_excel.xlsx"}
-
-    transaction = []
 
     while True:
         print(
@@ -65,7 +64,6 @@ def main():
         print("Отсортировать по возрастанию или по убыванию?")
         user_sort_reverse: bool = input("Пользователь: ").lower() == "по убыванию"
         transaction = sort_by_date(transaction, reverse=user_sort_reverse)
-
     print("Выводить только рублевые транзакции? Да/Нет")
     user_input: bool = input("Пользователь: ").lower() == "да"
     if user_input:
@@ -77,23 +75,28 @@ def main():
         search_word: str = input("Пользователь: ").strip().lower()
 
         # Фильтруем транзакции: ищем слово в поле 'description'
-        count_transaction_categories = [
+        search_word_lower = search_word.lower()
+
+        transaction_categories = [
             trans for trans in transaction
             if (
-                    search_word in str(trans.get("description", "")).lower() or
-                    search_word in str(trans.get("from", "")).lower() or
-                    search_word in str(trans.get("to", "")).lower()
-                )
+                    search_word_lower in str(trans.get("description", "")).strip() or
+                    search_word_lower in str(trans.get("from", "")).strip() or
+                    search_word_lower in str(trans.get("to", "")).strip()
+            )
         ]
 
         print("Распечатываю итоговый список транзакций...")
-        print(f"Всего банковских операций в выборке: {len(count_transaction_categories)}")
-
+        print(f"Всего банковских операций в выборке: {(count_operations_by_category(transaction_categories, words_users))}")
 
 
     for trans in transaction:
         state = trans.get("state")
-        date = trans.get("date")
+        date_str = trans.get("date")
+        if date_str:
+            date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d.%m.%Y")
+        else:
+            date = "Неизвестно"
         amount = trans.get("amount")
         currency_name = trans.get("currency_name")
         currency_code = trans.get("currency_code")
@@ -105,7 +108,7 @@ def main():
         check_from = " -> " + mask_account_card(to_from) if to_from else ""
         summ_print = f" сумма {amount}{currency_name}."
         print(f"{out_print}\n{check_to}{check_from}\n{summ_print}")
-
+        print(trans)
         """
             08.12.2019 Открытие вклада 
             Счет **4321
