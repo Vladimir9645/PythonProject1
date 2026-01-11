@@ -108,7 +108,6 @@ def main():
         check_from = " -> " + mask_account_card(to_from) if to_from else ""
         summ_print = f" сумма {amount}{currency_name}."
         print(f"{out_print}\n{check_to}{check_from}\n{summ_print}")
-        print(trans)
         """
             08.12.2019 Открытие вклада 
             Счет **4321
