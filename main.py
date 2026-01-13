@@ -87,7 +87,7 @@ def main():
         ]
 
         print("Распечатываю итоговый список транзакций...")
-        print(f"Всего банковских операций в выборке: {(count_operations_by_category(transaction_categories, search_word))}")
+        print(f"Всего банковских операций в выборке: {(count_operations_by_category(transaction_categories, words_users))}")
 
         if not transaction_categories:
             print("По вашему запросу транзакции не найдены.")
