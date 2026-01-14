@@ -1,6 +1,6 @@
-import os
 import csv
-from typing import List, Dict
+import os
+from typing import Dict, List
 
 # Путь от директории текущего скрипта
 current_dir = os.path.dirname(os.path.abspath(__file__))

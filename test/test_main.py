@@ -4,7 +4,6 @@ from src.generators import filter_by_currency
 from src.processing import filter_by_state
 from src.utils import process_bank_search
 
-
 # Sample transactions for tests
 SAMPLE_TRANSACTIONS = [
     {

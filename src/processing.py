@@ -1,6 +1,6 @@
+from collections import Counter
 from datetime import datetime
 from typing import Any, Dict, List
-from collections import Counter
 
 
 def filter_by_state(
@@ -99,7 +99,6 @@ filtered = filter_by_state(dictionary, "EXECUTED")
 sorted_filtered = sort_by_date(filtered)
 
 
-
 # Фильтруем словарь по состоянию 'CANCELED'
 filtered = filter_by_state(dictionary, "CANCELED")
 sorted_filtered = sort_by_date(filtered)
@@ -112,4 +111,3 @@ sorted_filtered = sort_by_date(filtered)
 # Использование функции сортировки
 sorted_events = sort_by_date(dictionary, "date")
 # print(sorted_events)
-
