@@ -110,39 +110,44 @@ from collections import Counter
 from typing import List, Dict, Any
 
 
-def count_operations_by_category(transactions: List[Dict[str, Any]],
-                                 categories: List[str]
-                                 ) -> Dict[str, int]:
+def count_operations_by_category(
+        transactions: List[Dict[str, Any]],
+        search_word: str,
+        categories: List[str]
+) -> Dict[str, int]:
     """
-    Подсчитывает количество банковских операций по заданным категориям.
-    """
-    # Инициализируем счётчик
-    counter = Counter()
+    1. Фильтрует транзакции по ключевому слову во всех текстовых полях.
+    2. Подсчитывает операции по категориям (поиск в description).
 
-    # Используем обычный словарь для подсчёта
-    counter: Dict[str, int] = {}
+    Возвращает словарь: {категория: количество}.
+    """
+    # Приводим поисковое слово к нижнему регистру
+    search_word_lower = search_word.lower()
+
+    # Инициализируем счётчик для категорий
+    counter = {cat: 0 for cat in categories}
 
     # Проходим по всем транзакциям
-    for transaction in transactions:
-        description = transaction.get("description", "").lower()
-        to_from = transaction.get("from")
-        to = mask_account_card(transaction.get("to"))
-        # Проверяем, к какой категории относится транзакция
+    for trans in transactions:
+        # Собираем все текстовые поля для поиска
+        text_parts = []
+        for field in ["description", "from", "to"]:
+            value = trans.get(field, "")
+            if value is not None:
+                text_parts.append(str(value).lower())
+        full_text = " ".join(text_parts)
+
+        # 1. Проверяем, содержит ли транзакция поисковое слово
+        if search_word_lower not in full_text:
+            continue  # Пропускаем, если слово не найдено
+
+        # 2. Проверяем, к какой категории относится транзакция
+        desc = str(trans.get("description", "")).lower()
         for category in categories:
-            if category.lower() in description:
-                if category not in counter:
-                    counter[category] = 1
-                else:
-                    counter[category] += 1
-                break  # Зачёт только в одну категорию
-
-    # Формируем итоговый словарь (гарантируем наличие всех категорий)
-    result: Dict[str, int] = {
-        category: counter.get(category, 0)
-        for category in categories
-    }
-
-    return result
+            if category.lower() in desc:
+                counter[category] += 1
+                break  # Зачёт только в первую подходящую категорию
+    return counter
 
 
 print()
@@ -172,5 +177,3 @@ print()
 # Пример использования
 # for card_number in card_number_generator(1, 5):
 # print(card_number)
-def find_by_description():
-    return list

@@ -16,10 +16,6 @@ print("""
 BASE_DIR = os.path.dirname(__file__)
 status = ["EXECUTED", "CANCELED", "PENDING"]
 
-words_users: list[str] = [
-    "Открытие вклада", "Перевод с карты на карту",
-    "Перевод организации", "Перевод со счета на счет"
-]
 
 def main():
     dict_file = {
@@ -70,47 +66,56 @@ def main():
         transaction = list(filter_by_currency(transaction, "RUB"))
     print("Отфильтровать список транзакций по определенному слову в описании? Да/Нет")
     user_input: bool = input("Пользователь: ").lower() == "да"
+
     if user_input:
         print("Введите слово для фильтрации:")
-        search_word: str = input("Пользователь: ").strip().lower()
-
-        # Фильтруем транзакции: ищем слово в поле 'description'
-        search_word_lower = search_word.lower()
-
-        transaction_categories = [
-            trans for trans in transaction
-            if (
-                    search_word_lower in str(trans.get("description", "")).strip() or
-                    search_word_lower in str(trans.get("from", "")).strip() or
-                    search_word_lower in str(trans.get("to", "")).strip()
-            )
-        ]
-
-        print("Распечатываю итоговый список транзакций...")
-        print(f"Всего банковских операций в выборке: {(count_operations_by_category(transaction_categories, words_users))}")
-
-        if not transaction_categories:
-            print("По вашему запросу транзакции не найдены.")
+        try:
+            search_word: str = input("Пользователь: ").strip().lower()
+        except (KeyboardInterrupt, EOFError):
+            print("Ввод прерван.")
             return
 
-    for trans in transaction:
-        state = trans.get("state")
-        date_str = trans.get("date")
-        if date_str:
-            date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d.%m.%Y")
+        categories = [
+            "Открытие вклада",
+            "Перевод с карты на карту",
+            "Перевод организации",
+            "Перевод со счета на счет"
+        ]
+
+        # Вызываем объединённую функцию
+        counts =  count_operations_by_category(transaction, search_word, categories)
+
+        # Проверяем, нашлись ли транзакции
+        total_found = sum(counts.values())
+        if total_found == 0:
+            print("Транзакции не найдены")
         else:
-            date = "Неизвестно"
-        amount = trans.get("amount")
-        currency_name = trans.get("currency_name")
-        currency_code = trans.get("currency_code")
-        to_from = trans.get("from")
-        to = mask_account_card(trans.get("to"))
-        description = trans.get("description")
-        out_print = f"{date} {description}"
-        check_to = f"{to}"
-        check_from = " -> " + mask_account_card(to_from) if to_from else ""
-        summ_print = f" сумма {amount}{currency_name}."
-        print(f"{out_print}\n{check_to}{check_from}\n{summ_print}")
+            print(f"Найдено транзакций: {total_found}")
+            print("Количество операций по категориям:")
+            for category, count in counts.items():
+                print(f"{category}: {count}")
+
+            for trans in transaction:
+                state = trans.get("state")
+                date_str = trans.get("date")
+                if date_str:
+                    date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d.%m.%Y")
+                else:
+                    date = "Неизвестно"
+
+                amount = trans.get("amount")
+                currency_name = trans.get("currency_name")
+                to_from = trans.get("from")
+                to = mask_account_card(trans.get("to"))
+                description = trans.get("description")
+
+                out_print = f"{date} {description}"
+                check_to = f"{to}"
+                check_from = " -> " + mask_account_card(to_from) if to_from else ""
+                summ_print = f" сумма {amount}{currency_name}."
+
+                print(f"{out_print}\n{check_to}{check_from}\n{summ_print}")
+
         """
             08.12.2019 Открытие вклада 
             Счет **4321
