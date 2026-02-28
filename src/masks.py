@@ -1,40 +1,52 @@
-"""принимает на вход номер карты в виде числа и возвращает маску"""
+# masks.py
+
+import logging
+
+# 1. Создаем отдельный логер для модуля masks
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)  # Уровень логирования — DEBUG и выше
+
+# 2. Настраиваем FileHandler
+file_handler = logging.FileHandler("../logs/application.log", encoding="utf-8")
+file_handler.setLevel(logging.DEBUG)
+
+# 3. Настраиваем форматтер: время, имя модуля, уровень, сообщение
+file_formatter = logging.Formatter(
+    "%(asctime)s %(name)s %(levelname)s %(message)s"
+)
+file_handler.setFormatter(file_formatter)
+
+# 4. Добавляем handler в логер
+logger.addHandler(file_handler)
 
 
 def get_mask_card_number(card_number: str) -> str:
-    """Функция входа номер карты в виде числа и возврата в виде маски """
-    # Убираем все пробелы из переданной строки
-    card_number = card_number.replace(" ", "")
-    # Проверяем, что длина карты 16 символов и все символы цифры
-    if len(card_number) != 16 or not card_number.isdigit():
+    """Принимает номер карты строкой, возвращает замаскированный вариант."""
+    logger.debug(f"Вызов get_mask_card_number(card_number={card_number!r})")
+    # Убираем все пробелы
+    clean = card_number.replace(" ", "")
+    # Проверяем валидность
+    if len(clean) != 16 or not clean.isdigit():
+        logger.error(f"Неверный номер карты: {card_number!r}")
         return "Неверный номер карты"
-    # Формируем формат XXXX XX** **** XXXX
-    # Первые 4 цифры остаются
-    part1 = card_number[:4]
-    # Следующие 2 цифры остаются
-    part2 = card_number[4:6]
-    # Далее 2 звёздочки вместо двух цифр
-    part2_mask = "**"
-    # Потом 4 звёздочки вместо четырех цифр
-    part3_mask = "****"
-    # Последние 4 цифры остаются
-    part4 = card_number[-4:]
-
-    return f"{part1} {part2}{part2_mask} {part3_mask} {part4}"
+    # Формируем маску
+    part1 = clean[:4]
+    part2 = clean[4:6]
+    masked = f"{part1} {part2}* *** {clean[-4:]}"
+    logger.debug(f"Успешно замаскировано: {masked}")
+    return masked
 
 
-"""Принимает на вход номер счета в виде числа и возвращает маску номера"""
-
-
-def get_mask_account(mask_account: str) -> str:
-    """функция ввода номера счета и вывода с маской"""
-
-    mask_account = mask_account.replace(" ", "")
-
-    if len(mask_account) != 20 or not mask_account.isdigit():
+def get_mask_account(account_number: str) -> str:
+    """Принимает номер счета строкой, возвращает в формате **XXXX."""
+    logger.debug(f"Вызов get_mask_account(account_number={account_number!r})")
+    clean = account_number.replace(" ", "")
+    # Проверяем валидность
+    if len(clean) != 20 or not clean.isdigit():
+        logger.error(f"Неверный номер счета: {account_number!r}")
         return "Неверный номер счета"
-    # остаються от 2 до 6
-    part_1 = mask_account[16:20]
-    # начиная с 2х **
-    part_1_mask = "**"
-    return f"{part_1_mask}{part_1}"
+    # Берем последние 4 цифры
+    last4 = clean[-4:]
+    masked = f"**{last4}"
+    logger.debug(f"Успешно замаскировано: {masked}")
+    return masked
